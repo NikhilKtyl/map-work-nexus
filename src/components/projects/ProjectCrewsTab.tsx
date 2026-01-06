@@ -10,6 +10,14 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -23,8 +31,8 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
-import { mockCrews, mockUsers, mockUnits, Crew, Unit } from '@/data/mockData';
-import { Users, MoreHorizontal, Plus, UserPlus, CheckCircle } from 'lucide-react';
+import { mockCrews, mockUsers, Crew, Unit } from '@/data/mockData';
+import { Users, MoreHorizontal, Plus, UserPlus, X } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 interface ProjectCrewsTabProps {
@@ -36,12 +44,20 @@ const ProjectCrewsTab: React.FC<ProjectCrewsTabProps> = ({ projectId, units }) =
   const { toast } = useToast();
   const [selectedUnitIds, setSelectedUnitIds] = useState<string[]>([]);
   const [filterStatus, setFilterStatus] = useState<string>('all');
-  const [filterRegion, setFilterRegion] = useState<string>('all');
+  const [showAddCrewModal, setShowAddCrewModal] = useState(false);
+  const [selectedCrewToAdd, setSelectedCrewToAdd] = useState<string>('');
 
-  // Get crews that have units assigned in this project
-  const projectCrews = mockCrews.filter((crew) => crew.isActive);
+  // Get crews assigned to this project
+  const projectCrews = mockCrews.filter(
+    (crew) => crew.isActive && crew.projectIds.includes(projectId)
+  );
 
-  // Get unassigned units for this project
+  // Get available crews not yet assigned to this project
+  const availableCrews = mockCrews.filter(
+    (crew) => crew.isActive && !crew.projectIds.includes(projectId)
+  );
+
+  // Get units for this project
   const projectUnits = units.filter((u) => {
     if (filterStatus !== 'all' && u.status !== filterStatus) return false;
     return true;
@@ -87,44 +103,171 @@ const ProjectCrewsTab: React.FC<ProjectCrewsTabProps> = ({ projectId, units }) =
     setSelectedUnitIds([]);
   };
 
+  const handleAddCrewToProject = () => {
+    if (!selectedCrewToAdd) return;
+    const crew = mockCrews.find((c) => c.id === selectedCrewToAdd);
+    if (crew) {
+      // In real app, this would update the database
+      crew.projectIds.push(projectId);
+      toast({
+        title: 'Crew added',
+        description: `${crew.name} has been added to this project`,
+      });
+    }
+    setSelectedCrewToAdd('');
+    setShowAddCrewModal(false);
+  };
+
+  const handleRemoveCrewFromProject = (crewId: string) => {
+    const crew = mockCrews.find((c) => c.id === crewId);
+    if (crew) {
+      // Check if crew has assigned units
+      const crewUnitsInProject = units.filter((u) => u.assignedCrewId === crewId);
+      if (crewUnitsInProject.length > 0) {
+        toast({
+          title: 'Cannot remove crew',
+          description: `${crew.name} has ${crewUnitsInProject.length} assigned units. Reassign them first.`,
+          variant: 'destructive',
+        });
+        return;
+      }
+      // In real app, this would update the database
+      crew.projectIds = crew.projectIds.filter((id) => id !== projectId);
+      toast({
+        title: 'Crew removed',
+        description: `${crew.name} has been removed from this project`,
+      });
+    }
+  };
+
   const totalSelectedLength = unassignedUnits
     .filter((u) => selectedUnitIds.includes(u.id))
     .reduce((sum, u) => sum + (u.length || 0), 0);
 
   return (
     <div className="space-y-6">
+      {/* Header with Add Crew button */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h3 className="text-lg font-semibold text-foreground">Project Crews</h3>
+          <p className="text-sm text-muted-foreground">
+            {projectCrews.length} crews assigned to this project
+          </p>
+        </div>
+        <Button onClick={() => setShowAddCrewModal(true)} className="gradient-primary">
+          <Plus className="w-4 h-4 mr-2" />
+          Add Crew
+        </Button>
+      </div>
+
       {/* Crew Summary */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {projectCrews.map((crew) => {
-          const crewUnitsCount = assignedUnits.filter((u) => u.assignedCrewId === crew.id).length;
-          const foreman = getForeman(crew.foremanId);
+        {projectCrews.length === 0 ? (
+          <div className="col-span-3 content-panel p-8 text-center">
+            <Users className="w-12 h-12 mx-auto text-muted-foreground mb-3" />
+            <h4 className="font-medium text-card-foreground mb-1">No crews assigned</h4>
+            <p className="text-sm text-muted-foreground mb-4">
+              Add crews to this project to start assigning units
+            </p>
+            <Button variant="outline" onClick={() => setShowAddCrewModal(true)}>
+              <Plus className="w-4 h-4 mr-2" />
+              Add First Crew
+            </Button>
+          </div>
+        ) : (
+          projectCrews.map((crew) => {
+            const crewUnitsCount = assignedUnits.filter((u) => u.assignedCrewId === crew.id).length;
+            const foreman = getForeman(crew.foremanId);
 
-          return (
-            <div key={crew.id} className="content-panel p-4">
-              <div className="flex items-start justify-between mb-3">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                    <Users className="w-5 h-5 text-primary" />
+            return (
+              <div key={crew.id} className="content-panel p-4">
+                <div className="flex items-start justify-between mb-3">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                      <Users className="w-5 h-5 text-primary" />
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-card-foreground">{crew.name}</h4>
+                      <p className="text-xs text-muted-foreground">
+                        {foreman?.name || 'No foreman'}
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <h4 className="font-medium text-card-foreground">{crew.name}</h4>
-                    <p className="text-xs text-muted-foreground">
-                      {foreman?.name || 'No foreman'}
-                    </p>
+                  <div className="flex items-center gap-2">
+                    <Badge variant={crew.type === 'internal' ? 'default' : 'secondary'}>
+                      {crew.type}
+                    </Badge>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8 text-muted-foreground hover:text-destructive"
+                      onClick={() => handleRemoveCrewFromProject(crew.id)}
+                    >
+                      <X className="w-4 h-4" />
+                    </Button>
                   </div>
                 </div>
-                <Badge variant={crew.type === 'internal' ? 'default' : 'secondary'}>
-                  {crew.type}
-                </Badge>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-muted-foreground">Assigned Units</span>
+                  <span className="font-medium text-card-foreground">{crewUnitsCount}</span>
+                </div>
               </div>
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-muted-foreground">Assigned Units</span>
-                <span className="font-medium text-card-foreground">{crewUnitsCount}</span>
-              </div>
-            </div>
-          );
-        })}
+            );
+          })
+        )}
       </div>
+
+      {/* Add Crew Modal */}
+      <Dialog open={showAddCrewModal} onOpenChange={setShowAddCrewModal}>
+        <DialogContent className="bg-card border-border">
+          <DialogHeader>
+            <DialogTitle className="text-foreground">Add Crew to Project</DialogTitle>
+            <DialogDescription>
+              Select a crew to add to this project. They will then be available for unit assignments.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-4">
+            {availableCrews.length === 0 ? (
+              <p className="text-sm text-muted-foreground text-center py-4">
+                All active crews are already assigned to this project
+              </p>
+            ) : (
+              <Select value={selectedCrewToAdd} onValueChange={setSelectedCrewToAdd}>
+                <SelectTrigger className="bg-background border-border">
+                  <SelectValue placeholder="Select a crew..." />
+                </SelectTrigger>
+                <SelectContent>
+                  {availableCrews.map((crew) => {
+                    const foreman = getForeman(crew.foremanId);
+                    return (
+                      <SelectItem key={crew.id} value={crew.id}>
+                        <div className="flex items-center gap-2">
+                          <span>{crew.name}</span>
+                          <span className="text-xs text-muted-foreground">
+                            ({crew.type} • {foreman?.name || 'No foreman'})
+                          </span>
+                        </div>
+                      </SelectItem>
+                    );
+                  })}
+                </SelectContent>
+              </Select>
+            )}
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowAddCrewModal(false)}>
+              Cancel
+            </Button>
+            <Button
+              onClick={handleAddCrewToProject}
+              disabled={!selectedCrewToAdd || availableCrews.length === 0}
+              className="gradient-primary"
+            >
+              Add Crew
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Unit Assignment Section */}
       <div className="content-panel">

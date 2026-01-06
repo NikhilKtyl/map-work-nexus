@@ -548,6 +548,7 @@ export interface Crew {
   equipment: string[];
   defaultWorkRegion: string;
   assignedUnitsCount: number;
+  projectIds: string[];
   isActive: boolean;
   createdAt: string;
 }
@@ -562,6 +563,7 @@ export const mockCrews: Crew[] = [
     equipment: ['Boring Rig #1', 'Utility Truck #3', 'Trailer #2'],
     defaultWorkRegion: 'Downtown District',
     assignedUnitsCount: 12,
+    projectIds: ['1', '4'],
     isActive: true,
     createdAt: '2024-02-01',
   },
@@ -574,6 +576,7 @@ export const mockCrews: Crew[] = [
     equipment: ['Plow Unit #1', 'Dump Truck'],
     defaultWorkRegion: 'Riverside Area',
     assignedUnitsCount: 8,
+    projectIds: ['2'],
     isActive: true,
     createdAt: '2024-03-15',
   },
@@ -586,6 +589,7 @@ export const mockCrews: Crew[] = [
     equipment: ['Aerial Lift #2', 'Service Van #5'],
     defaultWorkRegion: 'Suburban Zone',
     assignedUnitsCount: 5,
+    projectIds: ['1', '2', '4'],
     isActive: true,
     createdAt: '2024-04-01',
   },
