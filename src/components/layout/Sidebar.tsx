@@ -21,6 +21,7 @@ import {
   ClipboardCheck,
   ChevronLeft,
   ChevronRight,
+  Building2,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -43,6 +44,12 @@ const navItems: NavItem[] = [
     icon: <FolderKanban className="w-5 h-5" />,
     path: '/projects',
     roles: ['admin', 'pc', 'fm', 'foreman'],
+  },
+  {
+    label: 'Customers',
+    icon: <Building2 className="w-5 h-5" />,
+    path: '/customers',
+    roles: ['admin', 'pc', 'fm'],
   },
   {
     label: 'Map',
