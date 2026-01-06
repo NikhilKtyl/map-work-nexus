@@ -11,8 +11,13 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Bell, ChevronDown, LogOut, User } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
-const Header: React.FC = () => {
+interface HeaderProps {
+  collapsed?: boolean;
+}
+
+const Header: React.FC<HeaderProps> = ({ collapsed = false }) => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
@@ -22,7 +27,12 @@ const Header: React.FC = () => {
   };
 
   return (
-    <header className="h-16 bg-card border-b border-border flex items-center justify-between px-6 fixed top-0 right-0 left-64 z-10">
+    <header
+      className={cn(
+        'h-16 bg-card border-b border-border flex items-center justify-between px-6 fixed top-0 right-0 z-10 transition-all duration-300 ease-in-out',
+        collapsed ? 'left-[68px]' : 'left-64'
+      )}
+    >
       {/* Environment indicator */}
       <div className="flex items-center gap-3">
         <span className="px-2.5 py-1 rounded-full bg-success/10 border border-success/20 text-success text-xs font-medium">
