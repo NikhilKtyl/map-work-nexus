@@ -40,6 +40,7 @@ const Crews: React.FC = () => {
         equipment: crewData.equipment || [],
         defaultWorkRegion: crewData.defaultWorkRegion || '',
         assignedUnitsCount: 0,
+        projectIds: [],
         isActive: true,
         createdAt: new Date().toISOString(),
       };
