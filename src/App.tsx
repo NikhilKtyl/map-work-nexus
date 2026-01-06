@@ -12,6 +12,7 @@ import Projects from "./pages/Projects";
 import ProjectDetail from "./pages/ProjectDetail";
 import Units from "./pages/Units";
 import Admin from "./pages/Admin";
+import Map from "./pages/Map";
 import PlaceholderPage from "./pages/PlaceholderPage";
 import NotFound from "./pages/NotFound";
 
@@ -31,7 +32,7 @@ const App = () => (
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/projects" element={<Projects />} />
               <Route path="/projects/:id" element={<ProjectDetail />} />
-              <Route path="/map" element={<PlaceholderPage />} />
+              <Route path="/map" element={<Map />} />
               <Route path="/units" element={<Units />} />
               <Route path="/crews" element={<PlaceholderPage />} />
               <Route path="/field" element={<PlaceholderPage />} />
