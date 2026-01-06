@@ -225,14 +225,14 @@ const ProjectModal: React.FC<ProjectModalProps> = ({ open, onClose, project, onS
               <div className="space-y-2">
                 <Label className="text-card-foreground text-xs">Project Coordinator</Label>
                 <Select
-                  value={formData.assignedPc}
-                  onValueChange={(value) => setFormData({ ...formData, assignedPc: value })}
+                  value={formData.assignedPc || "none"}
+                  onValueChange={(value) => setFormData({ ...formData, assignedPc: value === "none" ? "" : value })}
                 >
                   <SelectTrigger className="bg-muted border-border text-card-foreground">
                     <SelectValue placeholder="Select PC" />
                   </SelectTrigger>
                   <SelectContent className="bg-card border-border">
-                    <SelectItem value="" className="text-muted-foreground">None</SelectItem>
+                    <SelectItem value="none" className="text-muted-foreground">None</SelectItem>
                     {pcs.map((user) => (
                       <SelectItem key={user.id} value={user.id} className="text-card-foreground">
                         {user.name}
@@ -245,14 +245,14 @@ const ProjectModal: React.FC<ProjectModalProps> = ({ open, onClose, project, onS
               <div className="space-y-2">
                 <Label className="text-card-foreground text-xs">Field Manager</Label>
                 <Select
-                  value={formData.assignedFm}
-                  onValueChange={(value) => setFormData({ ...formData, assignedFm: value })}
+                  value={formData.assignedFm || "none"}
+                  onValueChange={(value) => setFormData({ ...formData, assignedFm: value === "none" ? "" : value })}
                 >
                   <SelectTrigger className="bg-muted border-border text-card-foreground">
                     <SelectValue placeholder="Select FM" />
                   </SelectTrigger>
                   <SelectContent className="bg-card border-border">
-                    <SelectItem value="" className="text-muted-foreground">None</SelectItem>
+                    <SelectItem value="none" className="text-muted-foreground">None</SelectItem>
                     {fms.map((user) => (
                       <SelectItem key={user.id} value={user.id} className="text-card-foreground">
                         {user.name}
@@ -265,14 +265,14 @@ const ProjectModal: React.FC<ProjectModalProps> = ({ open, onClose, project, onS
               <div className="space-y-2">
                 <Label className="text-card-foreground text-xs">Default Foreman</Label>
                 <Select
-                  value={formData.defaultForeman}
-                  onValueChange={(value) => setFormData({ ...formData, defaultForeman: value })}
+                  value={formData.defaultForeman || "none"}
+                  onValueChange={(value) => setFormData({ ...formData, defaultForeman: value === "none" ? "" : value })}
                 >
                   <SelectTrigger className="bg-muted border-border text-card-foreground">
                     <SelectValue placeholder="Select Foreman" />
                   </SelectTrigger>
                   <SelectContent className="bg-card border-border">
-                    <SelectItem value="" className="text-muted-foreground">None</SelectItem>
+                    <SelectItem value="none" className="text-muted-foreground">None</SelectItem>
                     {foremen.map((user) => (
                       <SelectItem key={user.id} value={user.id} className="text-card-foreground">
                         {user.name}
@@ -312,14 +312,14 @@ const ProjectModal: React.FC<ProjectModalProps> = ({ open, onClose, project, onS
           <div className="space-y-2">
             <Label className="text-card-foreground">Parent Project (optional)</Label>
             <Select
-              value={formData.parentProjectId}
-              onValueChange={(value) => setFormData({ ...formData, parentProjectId: value })}
+              value={formData.parentProjectId || "none"}
+              onValueChange={(value) => setFormData({ ...formData, parentProjectId: value === "none" ? "" : value })}
             >
               <SelectTrigger className="bg-muted border-border text-card-foreground">
                 <SelectValue placeholder="No parent project" />
               </SelectTrigger>
               <SelectContent className="bg-card border-border">
-                <SelectItem value="" className="text-muted-foreground">None</SelectItem>
+                <SelectItem value="none" className="text-muted-foreground">None</SelectItem>
                 {mockProjects
                   .filter((p) => p.id !== project?.id)
                   .map((p) => (
