@@ -30,7 +30,7 @@ const Dashboard: React.FC = () => {
           <h1 className="text-2xl font-bold text-foreground">
             Welcome back, {user?.name.split(' ')[0]}
           </h1>
-          <p className="text-surface-foreground/60 mt-1">
+          <p className="text-muted-foreground mt-1">
             {getRoleLabel(user?.role || 'admin')} • Here's what's happening today
           </p>
         </div>

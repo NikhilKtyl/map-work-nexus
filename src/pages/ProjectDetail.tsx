@@ -53,7 +53,7 @@ const ProjectDetail: React.FC = () => {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh]">
         <h1 className="text-2xl font-bold text-foreground mb-2">Project Not Found</h1>
-        <p className="text-surface-foreground/60 mb-4">The project you're looking for doesn't exist.</p>
+        <p className="text-muted-foreground mb-4">The project you're looking for doesn't exist.</p>
         <Button onClick={() => navigate('/projects')} variant="outline">
           Back to Projects
         </Button>
@@ -87,7 +87,7 @@ const ProjectDetail: React.FC = () => {
             variant="ghost"
             size="icon"
             onClick={() => navigate('/projects')}
-            className="text-surface-foreground/60 hover:text-foreground mt-1"
+            className="text-muted-foreground hover:text-foreground mt-1"
           >
             <ArrowLeft className="w-5 h-5" />
           </Button>
@@ -98,7 +98,7 @@ const ProjectDetail: React.FC = () => {
                 {statusLabels[project.status]}
               </Badge>
             </div>
-            <div className="flex items-center gap-4 text-sm text-surface-foreground/60">
+            <div className="flex items-center gap-4 text-sm text-muted-foreground">
               <span>{project.code}</span>
               <span>•</span>
               <span>{project.customer}</span>
@@ -110,19 +110,19 @@ const ProjectDetail: React.FC = () => {
           <Button
             variant="outline"
             onClick={() => setIsModalOpen(true)}
-            className="border-border-dark text-foreground hover:bg-surface"
+            className="border-border text-foreground hover:bg-muted"
           >
             <Pencil className="w-4 h-4 mr-2" />
             Edit
           </Button>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="icon" className="border-border-dark text-foreground">
+              <Button variant="outline" size="icon" className="border-border text-foreground">
                 <MoreHorizontal className="w-4 h-4" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="bg-surface border-border-dark">
-              <DropdownMenuItem className="text-surface-foreground focus:bg-sidebar-accent">
+            <DropdownMenuContent align="end" className="bg-card border-border">
+              <DropdownMenuItem className="text-foreground focus:bg-muted">
                 <Archive className="w-4 h-4 mr-2" />
                 Archive Project
               </DropdownMenuItem>
@@ -133,7 +133,7 @@ const ProjectDetail: React.FC = () => {
 
       {/* Tabs */}
       <Tabs defaultValue="overview" className="space-y-6">
-        <TabsList className="bg-surface border border-border-dark p-1">
+        <TabsList className="bg-muted border border-border p-1">
           <TabsTrigger value="overview" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
             Overview
           </TabsTrigger>

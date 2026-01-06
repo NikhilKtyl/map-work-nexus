@@ -109,7 +109,7 @@ const Projects: React.FC = () => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-foreground">Projects</h1>
-          <p className="text-surface-foreground/60 mt-1">
+          <p className="text-muted-foreground mt-1">
             Manage and track all fiber installation projects
           </p>
         </div>

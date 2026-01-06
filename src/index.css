@@ -2,35 +2,35 @@
 @tailwind components;
 @tailwind utilities;
 
-/* BerryTech Design System - Dark Shell with Light Content Areas */
+/* BerryTech Design System - Light Pastel Theme */
 
 @layer base {
   :root {
-    /* Core palette */
-    --background: 222 47% 11%; /* #0F172A - dark blue-gray shell */
-    --foreground: 220 13% 91%; /* #E5E7EB - light text on dark */
+    /* App Background - very light, cool neutral */
+    --background: 225 25% 97%; /* #F5F7FB */
+    --foreground: 222 47% 11%; /* #111827 - primary text */
 
-    /* Light content surfaces */
-    --card: 210 20% 98%; /* #F9FAFB - light content areas */
-    --card-foreground: 222 47% 11%; /* #111827 - dark text on light */
+    /* Card/Panel Background - white */
+    --card: 0 0% 100%; /* #FFFFFF */
+    --card-foreground: 222 47% 11%; /* #111827 */
 
-    --popover: 210 20% 98%;
+    --popover: 0 0% 100%;
     --popover-foreground: 222 47% 11%;
 
-    /* Primary - Vibrant Blue */
-    --primary: 217 91% 60%; /* #2563EB */
+    /* Primary - Soft Blue */
+    --primary: 217 91% 60%; /* #3B82F6 */
     --primary-foreground: 0 0% 100%;
-    --primary-dark: 224 76% 48%; /* #1D4ED8 - hover state */
+    --primary-dark: 217 91% 53%; /* #2563EB - hover state */
 
-    /* Secondary - Warm Orange */
-    --secondary: 24 95% 53%; /* #F97316 */
+    /* Secondary - Fresh Green */
+    --secondary: 142 71% 45%; /* #22C55E */
     --secondary-foreground: 0 0% 100%;
 
-    /* Success - Green */
-    --success: 160 84% 39%; /* #10B981 */
+    /* Success - Green (same as secondary) */
+    --success: 142 71% 45%; /* #22C55E */
     --success-foreground: 0 0% 100%;
 
-    /* Warning - Yellow */
+    /* Warning - Soft Yellow */
     --warning: 45 93% 58%; /* #FACC15 */
     --warning-foreground: 222 47% 11%;
 
@@ -38,35 +38,38 @@
     --destructive: 0 84% 60%; /* #EF4444 */
     --destructive-foreground: 0 0% 100%;
 
-    /* Muted surfaces */
-    --muted: 220 14% 96%;
-    --muted-foreground: 220 9% 46%; /* #6B7280 */
+    /* Muted - Input backgrounds */
+    --muted: 210 20% 98%; /* #F9FAFB */
+    --muted-foreground: 220 9% 46%; /* #6B7280 - secondary text */
 
     /* Accent */
     --accent: 217 91% 60%;
     --accent-foreground: 0 0% 100%;
 
-    /* Surface - slightly lighter dark for panels */
-    --surface: 222 41% 12%; /* #111827 */
-    --surface-foreground: 220 13% 91%;
+    /* Surface - Subtle panel/sidebar background */
+    --surface: 220 13% 91%; /* #E5E7EB */
+    --surface-foreground: 222 47% 11%;
 
-    /* Borders */
+    /* Borders - subtle gray */
     --border: 220 13% 84%; /* #D1D5DB */
-    --border-dark: 217 19% 27%;
-    --input: 220 13% 84%;
+    --border-dark: 220 13% 78%;
+    --input: 210 20% 98%; /* #F9FAFB - input background */
     --ring: 217 91% 60%;
 
     --radius: 0.5rem;
 
-    /* Sidebar - dark theme */
-    --sidebar-background: 222 41% 12%;
-    --sidebar-foreground: 220 13% 91%;
+    /* Sidebar - light grayish blue */
+    --sidebar-background: 220 13% 91%; /* #E5E7EB */
+    --sidebar-foreground: 222 47% 11%; /* #111827 */
     --sidebar-primary: 217 91% 60%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 217 19% 20%;
-    --sidebar-accent-foreground: 220 13% 91%;
-    --sidebar-border: 217 19% 27%;
+    --sidebar-accent: 220 13% 85%;
+    --sidebar-accent-foreground: 222 47% 11%;
+    --sidebar-border: 220 13% 84%;
     --sidebar-ring: 217 91% 60%;
+
+    /* Disabled text */
+    --disabled: 220 9% 64%; /* #9CA3AF */
   }
 
   .dark {
@@ -78,7 +81,7 @@
     --popover-foreground: 220 13% 91%;
     --primary: 217 91% 60%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 24 95% 53%;
+    --secondary: 142 71% 45%;
     --secondary-foreground: 0 0% 100%;
     --muted: 217 19% 20%;
     --muted-foreground: 220 9% 60%;
@@ -102,18 +105,18 @@
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   }
 
-  /* Scrollbar styling for dark shell */
+  /* Scrollbar styling for light theme */
   ::-webkit-scrollbar {
     width: 8px;
     height: 8px;
   }
 
   ::-webkit-scrollbar-track {
-    background: hsl(var(--surface));
+    background: hsl(var(--muted));
   }
 
   ::-webkit-scrollbar-thumb {
-    background: hsl(var(--border-dark));
+    background: hsl(var(--border));
     border-radius: 4px;
   }
 
@@ -138,12 +141,12 @@
 
   /* Light content panel */
   .content-panel {
-    @apply bg-card text-card-foreground rounded-lg shadow-sm;
+    @apply bg-card text-card-foreground rounded-lg shadow-sm border border-border;
   }
 
   /* Stat card */
   .stat-card {
-    @apply content-panel p-6 border border-border/50;
+    @apply content-panel p-6;
   }
 
   /* Navigation item */
@@ -152,27 +155,32 @@
   }
 
   .nav-item-active {
-    @apply bg-sidebar-accent text-sidebar-foreground;
+    @apply bg-white text-primary shadow-sm;
   }
 }
 
 @layer utilities {
   /* Gradient overlays */
-  .gradient-dark {
-    background: linear-gradient(135deg, hsl(222 47% 11%) 0%, hsl(222 41% 15%) 100%);
+  .gradient-light {
+    background: linear-gradient(135deg, hsl(225 25% 97%) 0%, hsl(220 13% 91%) 100%);
   }
 
   .gradient-primary {
-    background: linear-gradient(135deg, hsl(217 91% 60%) 0%, hsl(224 76% 48%) 100%);
+    background: linear-gradient(135deg, hsl(217 91% 60%) 0%, hsl(217 91% 53%) 100%);
+  }
+
+  /* Subtle shadow for cards */
+  .shadow-card {
+    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.05), 0 1px 2px -1px rgb(0 0 0 / 0.05);
   }
 
   /* Glow effects */
   .glow-primary {
-    box-shadow: 0 0 20px -5px hsl(217 91% 60% / 0.4);
+    box-shadow: 0 0 20px -5px hsl(217 91% 60% / 0.3);
   }
 
   .glow-success {
-    box-shadow: 0 0 20px -5px hsl(160 84% 39% / 0.4);
+    box-shadow: 0 0 20px -5px hsl(142 71% 45% / 0.3);
   }
 
   /* Animation utilities */
