@@ -59,39 +59,39 @@ const Auth: React.FC = () => {
   return (
     <div className="min-h-screen flex">
       {/* Left side - Branding */}
-      <div className="hidden lg:flex lg:w-1/2 gradient-dark flex-col justify-between p-12">
+      <div className="hidden lg:flex lg:w-1/2 bg-primary flex-col justify-between p-12">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg gradient-primary flex items-center justify-center glow-primary">
-            <Zap className="w-6 h-6 text-primary-foreground" />
+          <div className="w-10 h-10 rounded-lg bg-white/20 flex items-center justify-center">
+            <Zap className="w-6 h-6 text-white" />
           </div>
-          <span className="text-2xl font-bold text-foreground">BerryTech</span>
+          <span className="text-2xl font-bold text-white">BerryTech</span>
         </div>
         
         <div className="space-y-6">
-          <h1 className="text-4xl font-bold text-foreground leading-tight">
+          <h1 className="text-4xl font-bold text-white leading-tight">
             Fiber Project<br />Management
           </h1>
-          <p className="text-lg text-foreground/70 max-w-md">
+          <p className="text-lg text-white/80 max-w-md">
             Streamline your telecom projects from planning to completion. 
             Track crews, manage units, and deliver on time.
           </p>
           <div className="flex gap-8 pt-4">
             <div>
-              <div className="text-3xl font-bold text-primary">500+</div>
-              <div className="text-sm text-foreground/60">Projects Managed</div>
+              <div className="text-3xl font-bold text-white">500+</div>
+              <div className="text-sm text-white/70">Projects Managed</div>
             </div>
             <div>
-              <div className="text-3xl font-bold text-success">98%</div>
-              <div className="text-sm text-foreground/60">On-Time Delivery</div>
+              <div className="text-3xl font-bold text-white">98%</div>
+              <div className="text-sm text-white/70">On-Time Delivery</div>
             </div>
             <div>
-              <div className="text-3xl font-bold text-secondary">50k+</div>
-              <div className="text-sm text-foreground/60">Units Completed</div>
+              <div className="text-3xl font-bold text-white">50k+</div>
+              <div className="text-sm text-white/70">Units Completed</div>
             </div>
           </div>
         </div>
 
-        <div className="text-sm text-foreground/50">
+        <div className="text-sm text-white/60">
           © 2024 BerryTech. All rights reserved.
         </div>
       </div>
