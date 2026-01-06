@@ -246,15 +246,133 @@ export const mockProjects: Project[] = [
   },
 ];
 
-export const customers = [
-  'Metro Telecom',
-  'CityConnect ISP',
-  'TechZone Solutions',
-  'HomeNet Services',
-  'EnterpriseCom',
-  'FiberFirst Networks',
-  'ConnectAll Inc.',
+// Customers
+export interface Customer {
+  id: string;
+  name: string;
+  code: string;
+  contactName: string;
+  contactEmail: string;
+  contactPhone: string;
+  address: string;
+  city: string;
+  state: string;
+  zipCode: string;
+  notes: string;
+  isActive: boolean;
+  createdAt: string;
+}
+
+export const mockCustomers: Customer[] = [
+  {
+    id: 'cust1',
+    name: 'Metro Telecom',
+    code: 'MT',
+    contactName: 'John Smith',
+    contactEmail: 'jsmith@metrotelecom.com',
+    contactPhone: '555-100-1001',
+    address: '123 Downtown Blvd',
+    city: 'Metro City',
+    state: 'CA',
+    zipCode: '90210',
+    notes: 'Major telecom provider, priority customer',
+    isActive: true,
+    createdAt: '2023-01-15',
+  },
+  {
+    id: 'cust2',
+    name: 'CityConnect ISP',
+    code: 'CC',
+    contactName: 'Sarah Johnson',
+    contactEmail: 'sjohnson@cityconnect.net',
+    contactPhone: '555-200-2002',
+    address: '456 Network Ave',
+    city: 'Riverside',
+    state: 'CA',
+    zipCode: '92501',
+    notes: 'ISP serving residential areas',
+    isActive: true,
+    createdAt: '2023-03-20',
+  },
+  {
+    id: 'cust3',
+    name: 'TechZone Solutions',
+    code: 'TZ',
+    contactName: 'Michael Chen',
+    contactEmail: 'mchen@techzone.io',
+    contactPhone: '555-300-3003',
+    address: '789 Industrial Park Dr',
+    city: 'Tech Valley',
+    state: 'CA',
+    zipCode: '94025',
+    notes: 'Industrial and enterprise solutions',
+    isActive: true,
+    createdAt: '2023-05-10',
+  },
+  {
+    id: 'cust4',
+    name: 'HomeNet Services',
+    code: 'HN',
+    contactName: 'Lisa Brown',
+    contactEmail: 'lbrown@homenet.com',
+    contactPhone: '555-400-4004',
+    address: '321 Suburban Lane',
+    city: 'Greenville',
+    state: 'CA',
+    zipCode: '91001',
+    notes: 'Residential fiber services',
+    isActive: true,
+    createdAt: '2023-06-01',
+  },
+  {
+    id: 'cust5',
+    name: 'EnterpriseCom',
+    code: 'EC',
+    contactName: 'David Martinez',
+    contactEmail: 'dmartinez@enterprisecom.net',
+    contactPhone: '555-500-5005',
+    address: '555 Business Center Pkwy',
+    city: 'Commerce City',
+    state: 'CA',
+    zipCode: '90040',
+    notes: 'Business district fiber provider',
+    isActive: true,
+    createdAt: '2023-02-28',
+  },
+  {
+    id: 'cust6',
+    name: 'FiberFirst Networks',
+    code: 'FF',
+    contactName: 'Emily White',
+    contactEmail: 'ewhite@fiberfirst.net',
+    contactPhone: '555-600-6006',
+    address: '888 Fiber Way',
+    city: 'Networx',
+    state: 'CA',
+    zipCode: '92101',
+    notes: 'New customer, expanding rapidly',
+    isActive: true,
+    createdAt: '2024-01-10',
+  },
+  {
+    id: 'cust7',
+    name: 'ConnectAll Inc.',
+    code: 'CA',
+    contactName: 'Robert Taylor',
+    contactEmail: 'rtaylor@connectall.com',
+    contactPhone: '555-700-7007',
+    address: '999 Connection Dr',
+    city: 'Linktown',
+    state: 'CA',
+    zipCode: '93001',
+    notes: 'Inactive - contract ended',
+    isActive: false,
+    createdAt: '2022-11-15',
+  },
 ];
+
+// Legacy customers array for backwards compatibility
+export const customers = mockCustomers.filter(c => c.isActive).map(c => c.name);
 
 // Map Sources
 export interface MapSource {

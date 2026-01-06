@@ -17,8 +17,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Project, customers, mockUsers, mockProjects } from '@/data/mockData';
-import { Loader2 } from 'lucide-react';
+import { Project, mockCustomers, mockUsers, mockProjects } from '@/data/mockData';
+import { Loader2, Plus } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 interface ProjectModalProps {
   open: boolean;
@@ -28,9 +29,11 @@ interface ProjectModalProps {
 }
 
 const ProjectModal: React.FC<ProjectModalProps> = ({ open, onClose, project, onSave }) => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: '',
     code: '',
+    customerId: '',
     customer: '',
     description: '',
     status: 'planning' as Project['status'],
@@ -45,15 +48,19 @@ const ProjectModal: React.FC<ProjectModalProps> = ({ open, onClose, project, onS
   });
   const [isSaving, setIsSaving] = useState(false);
 
+  const activeCustomers = mockCustomers.filter((c) => c.isActive);
   const pcs = mockUsers.filter((u) => u.role === 'pc');
   const fms = mockUsers.filter((u) => u.role === 'fm');
   const foremen = mockUsers.filter((u) => u.role === 'foreman');
 
   useEffect(() => {
     if (project) {
+      // Find customer ID from name
+      const customer = mockCustomers.find((c) => c.name === project.customer);
       setFormData({
         name: project.name,
         code: project.code,
+        customerId: customer?.id || '',
         customer: project.customer,
         description: project.description,
         status: project.status,
@@ -70,6 +77,7 @@ const ProjectModal: React.FC<ProjectModalProps> = ({ open, onClose, project, onS
       setFormData({
         name: '',
         code: '',
+        customerId: '',
         customer: '',
         description: '',
         status: 'planning',
@@ -84,6 +92,15 @@ const ProjectModal: React.FC<ProjectModalProps> = ({ open, onClose, project, onS
       });
     }
   }, [project, open]);
+
+  const handleCustomerChange = (customerId: string) => {
+    const customer = mockCustomers.find((c) => c.id === customerId);
+    setFormData({
+      ...formData,
+      customerId,
+      customer: customer?.name || '',
+    });
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -149,21 +166,35 @@ const ProjectModal: React.FC<ProjectModalProps> = ({ open, onClose, project, onS
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="customer" className="text-card-foreground">Customer *</Label>
-              <Select
-                value={formData.customer}
-                onValueChange={(value) => setFormData({ ...formData, customer: value })}
-              >
-                <SelectTrigger className="bg-muted border-border text-card-foreground">
-                  <SelectValue placeholder="Select customer" />
-                </SelectTrigger>
-                <SelectContent className="bg-card border-border">
-                  {customers.map((customer) => (
-                    <SelectItem key={customer} value={customer} className="text-card-foreground">
-                      {customer}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <div className="flex gap-2">
+                <Select
+                  value={formData.customerId}
+                  onValueChange={handleCustomerChange}
+                >
+                  <SelectTrigger className="bg-muted border-border text-card-foreground flex-1">
+                    <SelectValue placeholder="Select customer" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-card border-border">
+                    {activeCustomers.map((customer) => (
+                      <SelectItem key={customer.id} value={customer.id} className="text-card-foreground">
+                        <span className="flex items-center gap-2">
+                          <span className="text-xs text-muted-foreground">[{customer.code}]</span>
+                          {customer.name}
+                        </span>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="icon"
+                  onClick={() => navigate('/customers')}
+                  title="Add new customer"
+                >
+                  <Plus className="w-4 h-4" />
+                </Button>
+              </div>
             </div>
 
             <div className="space-y-2">
