@@ -21,6 +21,8 @@ import {
   File,
   Save,
   X,
+  PanelLeftClose,
+  PanelLeft,
 } from 'lucide-react';
 import { mockProjects, mockMapSources, MapSource } from '@/data/mockData';
 
@@ -32,6 +34,7 @@ const Map: React.FC = () => {
   const [selectedProject, setSelectedProject] = useState<string>('');
   const [selectedMapFile, setSelectedMapFile] = useState<string>('');
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const [panelCollapsed, setPanelCollapsed] = useState(false);
   const [layers, setLayers] = useState({
     projects: true,
     units: true,
@@ -85,12 +88,24 @@ const Map: React.FC = () => {
   return (
     <div className="h-[calc(100vh-4rem)] flex">
       {/* Left Panel - Layers & Filters */}
-      <div className="w-72 bg-card border-r border-border flex flex-col">
-        <div className="p-4 border-b border-border">
+      <div 
+        className={`bg-card border-r border-border flex flex-col transition-all duration-300 ${
+          panelCollapsed ? 'w-0 overflow-hidden' : 'w-72'
+        }`}
+      >
+        <div className="p-4 border-b border-border flex items-center justify-between">
           <h2 className="font-semibold text-foreground flex items-center gap-2">
             <Filter className="w-4 h-4" />
             Filters & Layers
           </h2>
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className="h-7 w-7"
+            onClick={() => setPanelCollapsed(true)}
+          >
+            <PanelLeftClose className="w-4 h-4" />
+          </Button>
         </div>
 
         <div className="flex-1 overflow-y-auto p-4 space-y-6">
@@ -225,6 +240,17 @@ const Map: React.FC = () => {
 
       {/* Main Map Area */}
       <div className="flex-1 relative">
+        {/* Expand Panel Button */}
+        {panelCollapsed && (
+          <Button
+            variant="secondary"
+            size="icon"
+            className="absolute top-4 left-4 z-20 h-8 w-8 shadow-md"
+            onClick={() => setPanelCollapsed(false)}
+          >
+            <PanelLeft className="w-4 h-4" />
+          </Button>
+        )}
         {/* Map Placeholder */}
         <div
           className={`absolute inset-0 ${
