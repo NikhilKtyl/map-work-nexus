@@ -624,3 +624,87 @@ export const mockTimeEntries: UnitTimeEntry[] = [
     totalMinutes: 240,
   },
 ];
+
+// Change Orders
+export interface ChangeOrder {
+  id: string;
+  code: string;
+  projectId: string;
+  type: 'simple' | 'major';
+  changeCategory?: string;
+  description: string;
+  reason?: string;
+  status: 'open' | 'approved' | 'rejected' | 'applied';
+  requestedBy: string;
+  approvedBy?: string;
+  approvedAt?: string;
+  appliedAt?: string;
+  impactedUnitIds: string[];
+  attachments: string[];
+  createdAt: string;
+}
+
+export const mockChangeOrders: ChangeOrder[] = [
+  {
+    id: 'co1',
+    code: 'CO-2024-001',
+    projectId: '1',
+    type: 'simple',
+    changeCategory: 'location_change',
+    description: 'Move handhole HH-001 approximately 15 feet north to avoid existing utility conflict',
+    reason: 'Discovered unmarked gas line during excavation',
+    status: 'approved',
+    requestedBy: '4',
+    approvedBy: '3',
+    approvedAt: '2024-06-10T14:00:00Z',
+    impactedUnitIds: ['u3'],
+    attachments: [],
+    createdAt: '2024-06-09T10:00:00Z',
+  },
+  {
+    id: 'co2',
+    code: 'CO-2024-002',
+    projectId: '1',
+    type: 'major',
+    changeCategory: 'add_units',
+    description: 'Add 5 additional handholes to support new customer connection points in Block C',
+    reason: 'Customer requested additional service drops',
+    status: 'open',
+    requestedBy: '2',
+    impactedUnitIds: [],
+    attachments: [],
+    createdAt: '2024-06-12T09:00:00Z',
+  },
+  {
+    id: 'co3',
+    code: 'CO-2024-003',
+    projectId: '2',
+    type: 'simple',
+    changeCategory: 'quantity_adjust',
+    description: 'Reduce bore length by 50 feet due to rock formation',
+    status: 'applied',
+    requestedBy: '4',
+    approvedBy: '3',
+    approvedAt: '2024-06-05T11:00:00Z',
+    appliedAt: '2024-06-06T08:00:00Z',
+    impactedUnitIds: ['u1'],
+    attachments: [],
+    createdAt: '2024-06-04T16:00:00Z',
+  },
+  {
+    id: 'co4',
+    code: 'CO-2024-004',
+    projectId: '1',
+    type: 'major',
+    changeCategory: 'remove_units',
+    description: 'Remove 3 pole installations - customer decided to use existing utility poles',
+    reason: 'Cost reduction initiative by customer',
+    status: 'rejected',
+    requestedBy: '2',
+    approvedBy: '1',
+    approvedAt: '2024-06-08T10:00:00Z',
+    impactedUnitIds: ['u5'],
+    attachments: [],
+    createdAt: '2024-06-07T14:00:00Z',
+  },
+];

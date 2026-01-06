@@ -12,6 +12,7 @@ import {
   Boxes,
   DollarSign,
   Zap,
+  ClipboardCheck,
 } from 'lucide-react';
 
 interface NavItem {
@@ -59,10 +60,16 @@ const navItems: NavItem[] = [
     roles: ['foreman', 'crew'],
   },
   {
+    label: 'Verification',
+    icon: <ClipboardCheck className="w-5 h-5" />,
+    path: '/verification',
+    roles: ['admin', 'pc', 'fm'],
+  },
+  {
     label: 'Change Orders',
     icon: <FileText className="w-5 h-5" />,
     path: '/change-orders',
-    roles: ['admin', 'pc', 'fm', 'accounting'],
+    roles: ['admin', 'pc', 'fm', 'foreman', 'accounting'],
   },
   {
     label: 'Reports',
