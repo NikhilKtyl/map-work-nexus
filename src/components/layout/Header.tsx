@@ -64,11 +64,17 @@ const Header: React.FC = () => {
           <DropdownMenuContent align="end" className="w-56 bg-card border-border">
             <DropdownMenuLabel className="text-foreground">My Account</DropdownMenuLabel>
             <DropdownMenuSeparator className="bg-border" />
-            <DropdownMenuItem className="text-muted-foreground focus:bg-muted focus:text-foreground">
+            <DropdownMenuItem 
+              onClick={() => navigate('/profile')}
+              className="text-muted-foreground focus:bg-muted focus:text-foreground cursor-pointer"
+            >
               <User className="w-4 h-4 mr-2" />
               Profile
             </DropdownMenuItem>
-            <DropdownMenuItem className="text-muted-foreground focus:bg-muted focus:text-foreground">
+            <DropdownMenuItem 
+              onClick={() => navigate('/settings')}
+              className="text-muted-foreground focus:bg-muted focus:text-foreground cursor-pointer"
+            >
               <Settings className="w-4 h-4 mr-2" />
               Settings
             </DropdownMenuItem>
