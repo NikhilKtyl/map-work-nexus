@@ -20,6 +20,8 @@ import ProjectMapView from '@/components/map/ProjectMapView';
 import UnitsListComponent from '@/components/units/UnitsList';
 import UnitCreationModal from '@/components/units/UnitCreationModal';
 import UnitDetailPanel from '@/components/units/UnitDetailPanel';
+import ProjectCrewsTab from '@/components/projects/ProjectCrewsTab';
+import ProjectChangeOrdersTab from '@/components/projects/ProjectChangeOrdersTab';
 import { useToast } from '@/hooks/use-toast';
 import {
   ArrowLeft,
@@ -454,30 +456,12 @@ const ProjectDetail: React.FC = () => {
 
         {/* Crews Tab */}
         <TabsContent value="crews">
-          <div className="content-panel p-12 text-center">
-            <Users className="w-16 h-16 text-warning mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-card-foreground mb-2">Crew Assignments</h3>
-            <p className="text-muted-foreground max-w-md mx-auto">
-              Assign crews to units, manage schedules, and track crew performance.
-            </p>
-            <Button className="gradient-primary mt-6">
-              Manage Crews
-            </Button>
-          </div>
+          <ProjectCrewsTab projectId={project.id} units={units} />
         </TabsContent>
 
         {/* Change Orders Tab */}
         <TabsContent value="change-orders">
-          <div className="content-panel p-12 text-center">
-            <FileText className="w-16 h-16 text-secondary mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-card-foreground mb-2">Change Orders</h3>
-            <p className="text-muted-foreground max-w-md mx-auto">
-              View and manage project change orders, track approvals and budget impacts.
-            </p>
-            <Button className="gradient-primary mt-6">
-              View Change Orders
-            </Button>
-          </div>
+          <ProjectChangeOrdersTab projectId={project.id} />
         </TabsContent>
 
         {/* Exports Tab */}
