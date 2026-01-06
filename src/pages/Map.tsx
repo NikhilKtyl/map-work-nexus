@@ -138,6 +138,26 @@ const Map: React.FC = () => {
             )}
           </div>
 
+          {/* Tool Selector */}
+          <div className="space-y-2">
+            <Label className="text-sm font-medium">Tool</Label>
+            <Select value={activeTool || 'select'} onValueChange={(val) => setActiveTool(val as DrawingTool)}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select Tool" />
+              </SelectTrigger>
+              <SelectContent>
+                {tools.map((tool) => (
+                  <SelectItem key={tool.id} value={tool.id}>
+                    <span className="flex items-center gap-2">
+                      <tool.icon className="w-3 h-3" />
+                      {tool.label}
+                    </span>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
           {/* Base Map Toggle */}
           <div className="space-y-3">
             <Label className="text-sm font-medium">Base Map</Label>
@@ -200,24 +220,6 @@ const Map: React.FC = () => {
             </div>
           </div>
 
-          {/* Legend */}
-          <div className="space-y-3">
-            <Label className="text-sm font-medium">Legend</Label>
-            <div className="space-y-2 text-sm">
-              <div className="flex items-center gap-2">
-                <Badge variant="default" className="h-5">Active</Badge>
-                <span className="text-muted-foreground">Active projects</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Badge variant="secondary" className="h-5">Completed</Badge>
-                <span className="text-muted-foreground">Completed projects</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Badge variant="outline" className="h-5">Pending</Badge>
-                <span className="text-muted-foreground">Pending projects</span>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
 
@@ -283,30 +285,6 @@ const Map: React.FC = () => {
           </div>
         </div>
 
-        {/* Drawing Tools */}
-        <div className="absolute top-4 left-4 z-10">
-          <Card className="shadow-lg">
-            <CardHeader className="p-3 pb-2">
-              <CardTitle className="text-sm font-medium">Tools</CardTitle>
-            </CardHeader>
-            <CardContent className="p-2 pt-0">
-              <div className="flex flex-col gap-1">
-                {tools.map((tool) => (
-                  <Button
-                    key={tool.id}
-                    variant={activeTool === tool.id ? 'default' : 'ghost'}
-                    size="sm"
-                    className="justify-start"
-                    onClick={() => setActiveTool(tool.id)}
-                  >
-                    <tool.icon className="w-4 h-4 mr-2" />
-                    {tool.label}
-                  </Button>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        </div>
 
         {/* Zoom Controls & Save/Cancel */}
         <div className="absolute top-4 right-4 z-10 flex flex-col gap-2">
