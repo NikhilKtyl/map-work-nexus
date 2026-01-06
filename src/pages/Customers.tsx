@@ -183,7 +183,7 @@ const Customers: React.FC = () => {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Customer</TableHead>
+                <TableHead>Company</TableHead>
                 <TableHead>Contact</TableHead>
                 <TableHead>Location</TableHead>
                 <TableHead>Projects</TableHead>
