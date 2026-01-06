@@ -208,7 +208,6 @@ const Customers: React.FC = () => {
                         </div>
                         <div>
                           <div className="font-medium">{customer.name}</div>
-                          <div className="text-sm text-muted-foreground">{customer.code}</div>
                         </div>
                       </div>
                     </TableCell>
