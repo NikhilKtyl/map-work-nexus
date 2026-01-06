@@ -708,3 +708,40 @@ export const mockChangeOrders: ChangeOrder[] = [
     createdAt: '2024-06-07T14:00:00Z',
   },
 ];
+
+// Export Records
+export interface ExportRecord {
+  id: string;
+  projectId: string;
+  fileName: string;
+  type: 'as_built_pdf' | 'ce_upload' | 'unit_csv';
+  generatedBy: string;
+  createdAt: string;
+}
+
+export const mockExportRecords: ExportRecord[] = [
+  {
+    id: 'exp1',
+    projectId: '1',
+    fileName: 'AsBuilt_DFE-2024-001_2024-06-01.pdf',
+    type: 'as_built_pdf',
+    generatedBy: '2',
+    createdAt: '2024-06-01T14:30:00Z',
+  },
+  {
+    id: 'exp2',
+    projectId: '1',
+    fileName: 'CE_Export_DFE-2024-001_2024-06-05.csv',
+    type: 'ce_upload',
+    generatedBy: '2',
+    createdAt: '2024-06-05T10:00:00Z',
+  },
+  {
+    id: 'exp3',
+    projectId: '5',
+    fileName: 'Units_BDU-2024-005_2024-05-30.csv',
+    type: 'unit_csv',
+    generatedBy: '6',
+    createdAt: '2024-05-30T16:45:00Z',
+  },
+];

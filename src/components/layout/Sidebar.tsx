@@ -72,7 +72,7 @@ const navItems: NavItem[] = [
     roles: ['admin', 'pc', 'fm', 'foreman', 'accounting'],
   },
   {
-    label: 'Reports',
+    label: 'Completion',
     icon: <DollarSign className="w-5 h-5" />,
     path: '/reports',
     roles: ['admin', 'pc', 'fm', 'accounting'],

@@ -17,6 +17,7 @@ import Crews from "./pages/Crews";
 import Field from "./pages/Field";
 import Verification from "./pages/Verification";
 import ChangeOrders from "./pages/ChangeOrders";
+import Completion from "./pages/Completion";
 import PlaceholderPage from "./pages/PlaceholderPage";
 import NotFound from "./pages/NotFound";
 
@@ -42,7 +43,7 @@ const App = () => (
               <Route path="/field" element={<Field />} />
               <Route path="/verification" element={<Verification />} />
               <Route path="/change-orders" element={<ChangeOrders />} />
-              <Route path="/reports" element={<PlaceholderPage />} />
+              <Route path="/reports" element={<Completion />} />
               <Route path="/admin" element={<Admin />} />
             </Route>
             <Route path="*" element={<NotFound />} />
