@@ -19,6 +19,8 @@ import {
   FileText,
   FileImage,
   File,
+  Save,
+  X,
 } from 'lucide-react';
 import { mockProjects, mockMapSources, MapSource } from '@/data/mockData';
 
@@ -27,8 +29,9 @@ type DrawingTool = 'select' | 'line' | 'marker' | null;
 const Map: React.FC = () => {
   const [activeTool, setActiveTool] = useState<DrawingTool>('select');
   const [baseMapType, setBaseMapType] = useState<'streets' | 'satellite'>('streets');
-  const [selectedProject, setSelectedProject] = useState<string>('all');
-  const [selectedMapFile, setSelectedMapFile] = useState<string>('all');
+  const [selectedProject, setSelectedProject] = useState<string>(mockProjects[0]?.id || '');
+  const [selectedMapFile, setSelectedMapFile] = useState<string>('');
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [layers, setLayers] = useState({
     projects: true,
     units: true,
@@ -37,14 +40,25 @@ const Map: React.FC = () => {
 
   // Get map files for selected project
   const projectMapFiles = useMemo(() => {
-    if (selectedProject === 'all') return [];
+    if (!selectedProject) return [];
     return mockMapSources.filter(ms => ms.projectId === selectedProject);
   }, [selectedProject]);
 
   // Reset map file selection when project changes
   const handleProjectChange = (projectId: string) => {
     setSelectedProject(projectId);
-    setSelectedMapFile('all');
+    const projectFiles = mockMapSources.filter(ms => ms.projectId === projectId);
+    setSelectedMapFile(projectFiles[0]?.id || '');
+  };
+
+  const handleSaveChanges = () => {
+    // Save logic would go here
+    setHasUnsavedChanges(false);
+  };
+
+  const handleCancelChanges = () => {
+    // Cancel/revert logic would go here
+    setHasUnsavedChanges(false);
   };
 
   const getFileIcon = (fileType: MapSource['fileType']) => {
@@ -85,10 +99,9 @@ const Map: React.FC = () => {
             <Label className="text-sm font-medium">Project</Label>
             <Select value={selectedProject} onValueChange={handleProjectChange}>
               <SelectTrigger>
-                <SelectValue placeholder="All Projects" />
+                <SelectValue placeholder="Select Project" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Projects</SelectItem>
                 {mockProjects.map((project) => (
                   <SelectItem key={project.id} value={project.id}>
                     {project.name}
@@ -98,35 +111,32 @@ const Map: React.FC = () => {
             </Select>
           </div>
 
-          {/* Map File Selector - Only show when project is selected */}
-          {selectedProject !== 'all' && (
-            <div className="space-y-2">
-              <Label className="text-sm font-medium">Map File</Label>
-              {projectMapFiles.length > 0 ? (
-                <Select value={selectedMapFile} onValueChange={setSelectedMapFile}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select Map File" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Layers</SelectItem>
-                    {projectMapFiles.map((mapFile) => {
-                      const FileIcon = getFileIcon(mapFile.fileType);
-                      return (
-                        <SelectItem key={mapFile.id} value={mapFile.id}>
-                          <span className="flex items-center gap-2">
-                            <FileIcon className="w-3 h-3" />
-                            {mapFile.name}
-                          </span>
-                        </SelectItem>
-                      );
-                    })}
-                  </SelectContent>
-                </Select>
-              ) : (
-                <p className="text-sm text-muted-foreground">No map files uploaded for this project</p>
-              )}
-            </div>
-          )}
+          {/* Map File Selector */}
+          <div className="space-y-2">
+            <Label className="text-sm font-medium">Map File</Label>
+            {projectMapFiles.length > 0 ? (
+              <Select value={selectedMapFile} onValueChange={setSelectedMapFile}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select Map File" />
+                </SelectTrigger>
+                <SelectContent>
+                  {projectMapFiles.map((mapFile) => {
+                    const FileIcon = getFileIcon(mapFile.fileType);
+                    return (
+                      <SelectItem key={mapFile.id} value={mapFile.id}>
+                        <span className="flex items-center gap-2">
+                          <FileIcon className="w-3 h-3" />
+                          {mapFile.name}
+                        </span>
+                      </SelectItem>
+                    );
+                  })}
+                </SelectContent>
+              </Select>
+            ) : (
+              <p className="text-sm text-muted-foreground">No map files uploaded for this project</p>
+            )}
+          </div>
 
           {/* Base Map Toggle */}
           <div className="space-y-3">
@@ -298,8 +308,35 @@ const Map: React.FC = () => {
           </Card>
         </div>
 
-        {/* Zoom Controls */}
-        <div className="absolute top-4 right-4 z-10">
+        {/* Zoom Controls & Save/Cancel */}
+        <div className="absolute top-4 right-4 z-10 flex flex-col gap-2">
+          {/* Save/Cancel Actions */}
+          <Card className="shadow-lg">
+            <CardContent className="p-2">
+              <div className="flex gap-1">
+                <Button 
+                  variant="default" 
+                  size="sm" 
+                  onClick={handleSaveChanges}
+                  className="gap-1"
+                >
+                  <Save className="w-4 h-4" />
+                  Save
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={handleCancelChanges}
+                  className="gap-1"
+                >
+                  <X className="w-4 h-4" />
+                  Cancel
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Zoom Controls */}
           <Card className="shadow-lg">
             <CardContent className="p-1">
               <div className="flex flex-col gap-1">
