@@ -24,7 +24,6 @@ interface CustomerModalProps {
 const CustomerModal: React.FC<CustomerModalProps> = ({ open, onClose, onSave, customer }) => {
   const [formData, setFormData] = useState({
     name: '',
-    code: '',
     contactName: '',
     contactEmail: '',
     contactPhone: '',
@@ -41,7 +40,6 @@ const CustomerModal: React.FC<CustomerModalProps> = ({ open, onClose, onSave, cu
     if (customer) {
       setFormData({
         name: customer.name,
-        code: customer.code,
         contactName: customer.contactName,
         contactEmail: customer.contactEmail,
         contactPhone: customer.contactPhone,
@@ -55,7 +53,6 @@ const CustomerModal: React.FC<CustomerModalProps> = ({ open, onClose, onSave, cu
     } else {
       setFormData({
         name: '',
-        code: '',
         contactName: '',
         contactEmail: '',
         contactPhone: '',
@@ -92,29 +89,15 @@ const CustomerModal: React.FC<CustomerModalProps> = ({ open, onClose, onSave, cu
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="name">Company Name *</Label>
-              <Input
-                id="name"
-                value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                placeholder="Enter company name"
-                required
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="code">Customer Code *</Label>
-              <Input
-                id="code"
-                value={formData.code}
-                onChange={(e) => setFormData({ ...formData, code: e.target.value.toUpperCase() })}
-                placeholder="e.g., MT, CC"
-                maxLength={5}
-                required
-              />
-            </div>
+          <div className="space-y-2">
+            <Label htmlFor="name">Company Name *</Label>
+            <Input
+              id="name"
+              value={formData.name}
+              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              placeholder="Enter company name"
+              required
+            />
           </div>
 
           <div className="border-t border-border pt-4">
@@ -227,7 +210,7 @@ const CustomerModal: React.FC<CustomerModalProps> = ({ open, onClose, onSave, cu
             <Button type="button" variant="outline" onClick={onClose}>
               Cancel
             </Button>
-            <Button type="submit" disabled={!formData.name || !formData.code || isSaving}>
+            <Button type="submit" disabled={!formData.name || isSaving}>
               {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : customer ? 'Save Changes' : 'Create Customer'}
             </Button>
           </DialogFooter>
