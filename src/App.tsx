@@ -10,6 +10,7 @@ import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
 import Projects from "./pages/Projects";
 import ProjectDetail from "./pages/ProjectDetail";
+import Units from "./pages/Units";
 import Admin from "./pages/Admin";
 import PlaceholderPage from "./pages/PlaceholderPage";
 import NotFound from "./pages/NotFound";
@@ -31,7 +32,7 @@ const App = () => (
               <Route path="/projects" element={<Projects />} />
               <Route path="/projects/:id" element={<ProjectDetail />} />
               <Route path="/map" element={<PlaceholderPage />} />
-              <Route path="/units" element={<PlaceholderPage />} />
+              <Route path="/units" element={<Units />} />
               <Route path="/crews" element={<PlaceholderPage />} />
               <Route path="/field" element={<PlaceholderPage />} />
               <Route path="/change-orders" element={<PlaceholderPage />} />

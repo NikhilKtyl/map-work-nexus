@@ -210,3 +210,330 @@ export const customers = [
   'FiberFirst Networks',
   'ConnectAll Inc.',
 ];
+
+// Map Sources
+export interface MapSource {
+  id: string;
+  projectId: string;
+  name: string;
+  fileName: string;
+  fileType: 'SHP' | 'KMZ' | 'CAD' | 'PDF' | 'IMAGE';
+  fileSize: number;
+  uploadDate: string;
+  status: 'processing' | 'processed' | 'error';
+  layerCategory: 'Base' | 'Design' | 'Reference';
+  isPrimary: boolean;
+  uploadedBy: string;
+}
+
+export const mockMapSources: MapSource[] = [
+  {
+    id: 'ms1',
+    projectId: '1',
+    name: 'Downtown Base Layout',
+    fileName: 'downtown_base_v2.shp',
+    fileType: 'SHP',
+    fileSize: 2450000,
+    uploadDate: '2024-03-05T10:00:00Z',
+    status: 'processed',
+    layerCategory: 'Base',
+    isPrimary: true,
+    uploadedBy: '2',
+  },
+  {
+    id: 'ms2',
+    projectId: '1',
+    name: 'Fiber Design Plan',
+    fileName: 'fiber_design_draft.kmz',
+    fileType: 'KMZ',
+    fileSize: 1200000,
+    uploadDate: '2024-03-10T14:30:00Z',
+    status: 'processed',
+    layerCategory: 'Design',
+    isPrimary: false,
+    uploadedBy: '2',
+  },
+  {
+    id: 'ms3',
+    projectId: '1',
+    name: 'Utility Reference',
+    fileName: 'utility_ref.pdf',
+    fileType: 'PDF',
+    fileSize: 5600000,
+    uploadDate: '2024-03-12T09:15:00Z',
+    status: 'processed',
+    layerCategory: 'Reference',
+    isPrimary: false,
+    uploadedBy: '1',
+  },
+];
+
+// Unit Types (Catalog)
+export interface UnitType {
+  id: string;
+  code: string;
+  name: string;
+  description: string;
+  category: 'Line' | 'Marker';
+  customerId?: string; // If customer-specific
+  defaultPrice: number;
+  defaultSubRate: number;
+  requiresGps: boolean;
+  requiresSequential: boolean;
+  requiresPhotos: boolean;
+  minPhotoCount: number;
+  isActive: boolean;
+}
+
+export const mockUnitTypes: UnitType[] = [
+  {
+    id: 'ut1',
+    code: 'BORE-FT',
+    name: 'Bore - per foot',
+    description: 'Horizontal directional boring for underground conduit installation',
+    category: 'Line',
+    defaultPrice: 12.50,
+    defaultSubRate: 8.75,
+    requiresGps: true,
+    requiresSequential: true,
+    requiresPhotos: true,
+    minPhotoCount: 2,
+    isActive: true,
+  },
+  {
+    id: 'ut2',
+    code: 'PLOW-FT',
+    name: 'Plow - per foot',
+    description: 'Direct burial plow installation for fiber conduit',
+    category: 'Line',
+    defaultPrice: 8.25,
+    defaultSubRate: 5.50,
+    requiresGps: true,
+    requiresSequential: true,
+    requiresPhotos: true,
+    minPhotoCount: 2,
+    isActive: true,
+  },
+  {
+    id: 'ut3',
+    code: 'AERIAL-FT',
+    name: 'Aerial Fiber - per foot',
+    description: 'Aerial strand and fiber installation on existing poles',
+    category: 'Line',
+    defaultPrice: 6.75,
+    defaultSubRate: 4.25,
+    requiresGps: false,
+    requiresSequential: true,
+    requiresPhotos: true,
+    minPhotoCount: 1,
+    isActive: true,
+  },
+  {
+    id: 'ut4',
+    code: 'FIBER-FT',
+    name: 'Fiber Pull - per foot',
+    description: 'Fiber cable pull through existing conduit',
+    category: 'Line',
+    defaultPrice: 3.50,
+    defaultSubRate: 2.25,
+    requiresGps: false,
+    requiresSequential: false,
+    requiresPhotos: false,
+    minPhotoCount: 0,
+    isActive: true,
+  },
+  {
+    id: 'ut5',
+    code: 'HH-EA',
+    name: 'Handhole - each',
+    description: 'Handhole installation for underground access points',
+    category: 'Marker',
+    defaultPrice: 450.00,
+    defaultSubRate: 325.00,
+    requiresGps: true,
+    requiresSequential: true,
+    requiresPhotos: true,
+    minPhotoCount: 3,
+    isActive: true,
+  },
+  {
+    id: 'ut6',
+    code: 'POLE-EA',
+    name: 'Pole - each',
+    description: 'New pole installation for aerial runs',
+    category: 'Marker',
+    defaultPrice: 850.00,
+    defaultSubRate: 600.00,
+    requiresGps: true,
+    requiresSequential: true,
+    requiresPhotos: true,
+    minPhotoCount: 2,
+    isActive: true,
+  },
+  {
+    id: 'ut7',
+    code: 'CAB-EA',
+    name: 'Cabinet - each',
+    description: 'Fiber distribution cabinet installation',
+    category: 'Marker',
+    defaultPrice: 1200.00,
+    defaultSubRate: 850.00,
+    requiresGps: true,
+    requiresSequential: true,
+    requiresPhotos: true,
+    minPhotoCount: 4,
+    isActive: true,
+  },
+  {
+    id: 'ut8',
+    code: 'ANCHOR-EA',
+    name: 'Anchor - each',
+    description: 'Guy wire anchor installation',
+    category: 'Marker',
+    defaultPrice: 175.00,
+    defaultSubRate: 125.00,
+    requiresGps: true,
+    requiresSequential: false,
+    requiresPhotos: true,
+    minPhotoCount: 1,
+    isActive: true,
+  },
+];
+
+// Units (Actual placed units on map)
+export type UnitStatus = 'not_started' | 'in_progress' | 'completed' | 'needs_verification' | 'verified';
+
+export interface Unit {
+  id: string;
+  projectId: string;
+  unitTypeId: string;
+  code: string;
+  geometryType: 'Line' | 'Marker';
+  length?: number; // For line units, in feet
+  coordinates: { lat: number; lng: number }[];
+  price: number;
+  subRate: number;
+  status: UnitStatus;
+  assignedCrewId?: string;
+  assignedDate?: string;
+  completedDate?: string;
+  verifiedDate?: string;
+  notes: string;
+  photos: string[];
+  sequentialNumber?: number;
+  gpsReadings: { lat: number; lng: number; timestamp: string }[];
+  lastUpdated: string;
+  createdAt: string;
+}
+
+export const mockUnits: Unit[] = [
+  {
+    id: 'u1',
+    projectId: '1',
+    unitTypeId: 'ut1',
+    code: 'DFE-BORE-001',
+    geometryType: 'Line',
+    length: 450,
+    coordinates: [
+      { lat: 40.7128, lng: -74.006 },
+      { lat: 40.7135, lng: -74.0055 },
+    ],
+    price: 12.50,
+    subRate: 8.75,
+    status: 'completed',
+    assignedCrewId: '5',
+    assignedDate: '2024-03-15',
+    completedDate: '2024-03-18',
+    notes: 'Completed ahead of schedule',
+    photos: [],
+    sequentialNumber: 1,
+    gpsReadings: [],
+    lastUpdated: '2024-03-18T16:00:00Z',
+    createdAt: '2024-03-10',
+  },
+  {
+    id: 'u2',
+    projectId: '1',
+    unitTypeId: 'ut1',
+    code: 'DFE-BORE-002',
+    geometryType: 'Line',
+    length: 380,
+    coordinates: [
+      { lat: 40.7135, lng: -74.0055 },
+      { lat: 40.714, lng: -74.005 },
+    ],
+    price: 12.50,
+    subRate: 8.75,
+    status: 'verified',
+    assignedCrewId: '5',
+    assignedDate: '2024-03-19',
+    completedDate: '2024-03-22',
+    verifiedDate: '2024-03-23',
+    notes: '',
+    photos: [],
+    sequentialNumber: 2,
+    gpsReadings: [],
+    lastUpdated: '2024-03-23T10:00:00Z',
+    createdAt: '2024-03-15',
+  },
+  {
+    id: 'u3',
+    projectId: '1',
+    unitTypeId: 'ut5',
+    code: 'DFE-HH-001',
+    geometryType: 'Marker',
+    coordinates: [{ lat: 40.7128, lng: -74.006 }],
+    price: 450.00,
+    subRate: 325.00,
+    status: 'in_progress',
+    assignedCrewId: '5',
+    assignedDate: '2024-06-10',
+    notes: 'Standard 24x36 handhole',
+    photos: [],
+    sequentialNumber: 1,
+    gpsReadings: [],
+    lastUpdated: '2024-06-12T14:00:00Z',
+    createdAt: '2024-06-05',
+  },
+  {
+    id: 'u4',
+    projectId: '1',
+    unitTypeId: 'ut3',
+    code: 'DFE-AER-001',
+    geometryType: 'Line',
+    length: 820,
+    coordinates: [
+      { lat: 40.715, lng: -74.004 },
+      { lat: 40.716, lng: -74.003 },
+    ],
+    price: 6.75,
+    subRate: 4.25,
+    status: 'not_started',
+    notes: 'Waiting for pole permits',
+    photos: [],
+    sequentialNumber: 1,
+    gpsReadings: [],
+    lastUpdated: '2024-06-01T09:00:00Z',
+    createdAt: '2024-06-01',
+  },
+  {
+    id: 'u5',
+    projectId: '1',
+    unitTypeId: 'ut6',
+    code: 'DFE-POLE-001',
+    geometryType: 'Marker',
+    coordinates: [{ lat: 40.715, lng: -74.004 }],
+    price: 850.00,
+    subRate: 600.00,
+    status: 'needs_verification',
+    assignedCrewId: '5',
+    assignedDate: '2024-05-20',
+    completedDate: '2024-05-25',
+    notes: '40ft wood pole',
+    photos: [],
+    sequentialNumber: 1,
+    gpsReadings: [],
+    lastUpdated: '2024-05-25T17:00:00Z',
+    createdAt: '2024-05-15',
+  },
+];

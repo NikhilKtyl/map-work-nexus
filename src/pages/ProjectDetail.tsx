@@ -4,8 +4,22 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { mockProjects, mockUsers, Project } from '@/data/mockData';
+import {
+  mockProjects,
+  mockUsers,
+  mockMapSources,
+  mockUnits,
+  Project,
+  MapSource,
+  Unit,
+} from '@/data/mockData';
 import ProjectModal from '@/components/projects/ProjectModal';
+import MapSourcesList from '@/components/map/MapSourcesList';
+import MapUploadModal from '@/components/map/MapUploadModal';
+import ProjectMapView from '@/components/map/ProjectMapView';
+import UnitsListComponent from '@/components/units/UnitsList';
+import UnitCreationModal from '@/components/units/UnitCreationModal';
+import UnitDetailPanel from '@/components/units/UnitDetailPanel';
 import { useToast } from '@/hooks/use-toast';
 import {
   ArrowLeft,
@@ -46,8 +60,24 @@ const ProjectDetail: React.FC = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
+  const [isUnitCreationOpen, setIsUnitCreationOpen] = useState(false);
+  const [creationGeometryType, setCreationGeometryType] = useState<'Line' | 'Marker'>('Line');
+  const [selectedUnit, setSelectedUnit] = useState<Unit | null>(null);
+  const [activeTab, setActiveTab] = useState('overview');
 
+  // Project data
   const project = mockProjects.find((p) => p.id === id);
+
+  // Map sources for this project
+  const [mapSources, setMapSources] = useState<MapSource[]>(
+    mockMapSources.filter((m) => m.projectId === id)
+  );
+
+  // Units for this project
+  const [units, setUnits] = useState<Unit[]>(
+    mockUnits.filter((u) => u.projectId === id)
+  );
 
   if (!project) {
     return (
@@ -76,6 +106,77 @@ const ProjectDetail: React.FC = () => {
 
   const handleSaveProject = (data: Partial<Project>) => {
     toast({ title: 'Project updated', description: 'Changes have been saved.' });
+  };
+
+  // Map source handlers
+  const handleUploadMapSource = (data: Partial<MapSource>) => {
+    const newSource: MapSource = {
+      id: String(Date.now()),
+      projectId: project.id,
+      name: data.name || '',
+      fileName: data.fileName || '',
+      fileType: data.fileType || 'IMAGE',
+      fileSize: data.fileSize || 0,
+      uploadDate: new Date().toISOString(),
+      status: 'processing',
+      layerCategory: data.layerCategory || 'Reference',
+      isPrimary: mapSources.length === 0,
+      uploadedBy: '1',
+    };
+    setMapSources((prev) => [...prev, newSource]);
+    toast({ title: 'Map uploaded', description: 'Processing your map file...' });
+
+    // Simulate processing
+    setTimeout(() => {
+      setMapSources((prev) =>
+        prev.map((s) => (s.id === newSource.id ? { ...s, status: 'processed' } : s))
+      );
+      toast({ title: 'Map processed', description: `${newSource.name} is ready to use.` });
+    }, 2000);
+  };
+
+  const handleSetPrimary = (id: string) => {
+    setMapSources((prev) =>
+      prev.map((s) => ({ ...s, isPrimary: s.id === id }))
+    );
+    toast({ title: 'Primary map updated' });
+  };
+
+  const handleRemoveMapSource = (id: string) => {
+    setMapSources((prev) => prev.filter((s) => s.id !== id));
+    toast({ title: 'Map source removed' });
+  };
+
+  // Unit handlers
+  const handleCreateUnit = (geometryType: 'Line' | 'Marker') => {
+    setCreationGeometryType(geometryType);
+    setIsUnitCreationOpen(true);
+  };
+
+  const handleSaveUnit = (data: Partial<Unit>) => {
+    const newUnit: Unit = {
+      id: String(Date.now()),
+      projectId: project.id,
+      unitTypeId: data.unitTypeId || '',
+      code: `${project.code.split('-')[0]}-${Date.now().toString().slice(-4)}`,
+      geometryType: data.geometryType || 'Line',
+      length: data.length,
+      coordinates: data.coordinates || [],
+      price: data.price || 0,
+      subRate: data.subRate || 0,
+      status: 'not_started',
+      notes: data.notes || '',
+      photos: [],
+      gpsReadings: [],
+      lastUpdated: new Date().toISOString(),
+      createdAt: new Date().toISOString().split('T')[0],
+    };
+    setUnits((prev) => [...prev, newUnit]);
+    toast({ title: 'Unit created', description: `${newUnit.code} has been added to the project.` });
+  };
+
+  const handleSelectUnit = (unit: Unit) => {
+    setSelectedUnit(unit);
   };
 
   return (
@@ -132,7 +233,7 @@ const ProjectDetail: React.FC = () => {
       </div>
 
       {/* Tabs */}
-      <Tabs defaultValue="overview" className="space-y-6">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
         <TabsList className="bg-muted border border-border p-1">
           <TabsTrigger value="overview" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
             Overview
@@ -238,11 +339,19 @@ const ProjectDetail: React.FC = () => {
             <div className="content-panel p-6">
               <h3 className="font-semibold text-card-foreground mb-4">Quick Actions</h3>
               <div className="space-y-2">
-                <Button variant="outline" className="w-full justify-start border-border text-card-foreground hover:bg-muted">
+                <Button
+                  variant="outline"
+                  className="w-full justify-start border-border text-card-foreground hover:bg-muted"
+                  onClick={() => setActiveTab('map')}
+                >
                   <Map className="w-4 h-4 mr-3 text-primary" />
                   Open Map View
                 </Button>
-                <Button variant="outline" className="w-full justify-start border-border text-card-foreground hover:bg-muted">
+                <Button
+                  variant="outline"
+                  className="w-full justify-start border-border text-card-foreground hover:bg-muted"
+                  onClick={() => setActiveTab('units')}
+                >
                   <Boxes className="w-4 h-4 mr-3 text-success" />
                   Manage Units
                 </Button>
@@ -303,30 +412,43 @@ const ProjectDetail: React.FC = () => {
         </TabsContent>
 
         {/* Map Tab */}
-        <TabsContent value="map">
-          <div className="content-panel p-12 text-center">
-            <Map className="w-16 h-16 text-primary mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-card-foreground mb-2">Map View</h3>
-            <p className="text-muted-foreground max-w-md mx-auto">
-              Interactive map view for project units and locations. Requires Mapbox integration.
-            </p>
-            <Button className="gradient-primary mt-6">
-              Configure Map
-            </Button>
+        <TabsContent value="map" className="space-y-6">
+          {/* Map Sources */}
+          <div className="content-panel p-6">
+            <MapSourcesList
+              sources={mapSources}
+              onUpload={() => setIsUploadModalOpen(true)}
+              onSetPrimary={handleSetPrimary}
+              onReplace={(id) => toast({ title: 'Replace not implemented', description: 'This would open file picker.' })}
+              onRemove={handleRemoveMapSource}
+            />
           </div>
+
+          {/* Interactive Map */}
+          <ProjectMapView
+            mapSources={mapSources}
+            units={units}
+            onCreateUnit={handleCreateUnit}
+            onSelectUnit={handleSelectUnit}
+          />
         </TabsContent>
 
         {/* Units Tab */}
         <TabsContent value="units">
-          <div className="content-panel p-12 text-center">
-            <Boxes className="w-16 h-16 text-success mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-card-foreground mb-2">Units Management</h3>
-            <p className="text-muted-foreground max-w-md mx-auto">
-              Manage project units, track completion status, and view unit details.
-            </p>
-            <Button className="gradient-primary mt-6">
-              View All Units
-            </Button>
+          <div className="flex gap-0">
+            <div className={`flex-1 transition-all ${selectedUnit ? 'mr-0' : ''}`}>
+              <UnitsListComponent
+                units={units}
+                onSelectUnit={handleSelectUnit}
+              />
+            </div>
+            {selectedUnit && (
+              <UnitDetailPanel
+                unit={selectedUnit}
+                onClose={() => setSelectedUnit(null)}
+                onEdit={() => toast({ title: 'Edit not implemented' })}
+              />
+            )}
           </div>
         </TabsContent>
 
@@ -388,11 +510,27 @@ const ProjectDetail: React.FC = () => {
         </TabsContent>
       </Tabs>
 
+      {/* Modals */}
       <ProjectModal
         open={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         project={project}
         onSave={handleSaveProject}
+      />
+
+      <MapUploadModal
+        open={isUploadModalOpen}
+        onClose={() => setIsUploadModalOpen(false)}
+        onSave={handleUploadMapSource}
+      />
+
+      <UnitCreationModal
+        open={isUnitCreationOpen}
+        onClose={() => setIsUnitCreationOpen(false)}
+        project={project}
+        geometryType={creationGeometryType}
+        calculatedLength={Math.floor(Math.random() * 500) + 100}
+        onSave={handleSaveUnit}
       />
     </div>
   );
