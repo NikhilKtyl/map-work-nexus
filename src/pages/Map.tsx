@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -16,8 +16,11 @@ import {
   Map as MapIcon,
   Satellite,
   Filter,
+  FileText,
+  FileImage,
+  File,
 } from 'lucide-react';
-import { mockProjects } from '@/data/mockData';
+import { mockProjects, mockMapSources, MapSource } from '@/data/mockData';
 
 type DrawingTool = 'select' | 'line' | 'marker' | null;
 
@@ -25,11 +28,35 @@ const Map: React.FC = () => {
   const [activeTool, setActiveTool] = useState<DrawingTool>('select');
   const [baseMapType, setBaseMapType] = useState<'streets' | 'satellite'>('streets');
   const [selectedProject, setSelectedProject] = useState<string>('all');
+  const [selectedMapFile, setSelectedMapFile] = useState<string>('all');
   const [layers, setLayers] = useState({
     projects: true,
     units: true,
     crews: false,
   });
+
+  // Get map files for selected project
+  const projectMapFiles = useMemo(() => {
+    if (selectedProject === 'all') return [];
+    return mockMapSources.filter(ms => ms.projectId === selectedProject);
+  }, [selectedProject]);
+
+  // Reset map file selection when project changes
+  const handleProjectChange = (projectId: string) => {
+    setSelectedProject(projectId);
+    setSelectedMapFile('all');
+  };
+
+  const getFileIcon = (fileType: MapSource['fileType']) => {
+    switch (fileType) {
+      case 'PDF':
+        return FileText;
+      case 'IMAGE':
+        return FileImage;
+      default:
+        return File;
+    }
+  };
 
   const toggleLayer = (layer: keyof typeof layers) => {
     setLayers((prev) => ({ ...prev, [layer]: !prev[layer] }));
@@ -56,7 +83,7 @@ const Map: React.FC = () => {
           {/* Project Filter */}
           <div className="space-y-2">
             <Label className="text-sm font-medium">Project</Label>
-            <Select value={selectedProject} onValueChange={setSelectedProject}>
+            <Select value={selectedProject} onValueChange={handleProjectChange}>
               <SelectTrigger>
                 <SelectValue placeholder="All Projects" />
               </SelectTrigger>
@@ -70,6 +97,36 @@ const Map: React.FC = () => {
               </SelectContent>
             </Select>
           </div>
+
+          {/* Map File Selector - Only show when project is selected */}
+          {selectedProject !== 'all' && (
+            <div className="space-y-2">
+              <Label className="text-sm font-medium">Map File</Label>
+              {projectMapFiles.length > 0 ? (
+                <Select value={selectedMapFile} onValueChange={setSelectedMapFile}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select Map File" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Layers</SelectItem>
+                    {projectMapFiles.map((mapFile) => {
+                      const FileIcon = getFileIcon(mapFile.fileType);
+                      return (
+                        <SelectItem key={mapFile.id} value={mapFile.id}>
+                          <span className="flex items-center gap-2">
+                            <FileIcon className="w-3 h-3" />
+                            {mapFile.name}
+                          </span>
+                        </SelectItem>
+                      );
+                    })}
+                  </SelectContent>
+                </Select>
+              ) : (
+                <p className="text-sm text-muted-foreground">No map files uploaded for this project</p>
+              )}
+            </div>
+          )}
 
           {/* Base Map Toggle */}
           <div className="space-y-3">
