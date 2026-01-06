@@ -1,11 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import Sidebar from './Sidebar';
 import Header from './Header';
+import { cn } from '@/lib/utils';
 
 const AppLayout: React.FC = () => {
   const { isAuthenticated } = useAuth();
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   if (!isAuthenticated) {
     return <Navigate to="/auth" replace />;
@@ -13,9 +15,17 @@ const AppLayout: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <Sidebar />
-      <Header />
-      <main className="ml-64 pt-16 min-h-screen">
+      <Sidebar 
+        collapsed={sidebarCollapsed} 
+        onToggle={() => setSidebarCollapsed(!sidebarCollapsed)} 
+      />
+      <Header collapsed={sidebarCollapsed} />
+      <main
+        className={cn(
+          'pt-16 min-h-screen transition-all duration-300 ease-in-out',
+          sidebarCollapsed ? 'ml-[68px]' : 'ml-64'
+        )}
+      >
         <div className="p-6">
           <Outlet />
         </div>
