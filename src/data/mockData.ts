@@ -537,3 +537,90 @@ export const mockUnits: Unit[] = [
     createdAt: '2024-05-15',
   },
 ];
+
+// Crews
+export interface Crew {
+  id: string;
+  name: string;
+  type: 'internal' | 'subcontractor';
+  foremanId: string;
+  memberIds: string[];
+  equipment: string[];
+  defaultWorkRegion: string;
+  assignedUnitsCount: number;
+  isActive: boolean;
+  createdAt: string;
+}
+
+export const mockCrews: Crew[] = [
+  {
+    id: 'crew1',
+    name: 'Alpha Team',
+    type: 'internal',
+    foremanId: '4',
+    memberIds: ['5'],
+    equipment: ['Boring Rig #1', 'Utility Truck #3', 'Trailer #2'],
+    defaultWorkRegion: 'Downtown District',
+    assignedUnitsCount: 12,
+    isActive: true,
+    createdAt: '2024-02-01',
+  },
+  {
+    id: 'crew2',
+    name: 'Bravo Contractors',
+    type: 'subcontractor',
+    foremanId: '7',
+    memberIds: [],
+    equipment: ['Plow Unit #1', 'Dump Truck'],
+    defaultWorkRegion: 'Riverside Area',
+    assignedUnitsCount: 8,
+    isActive: true,
+    createdAt: '2024-03-15',
+  },
+  {
+    id: 'crew3',
+    name: 'Charlie Squad',
+    type: 'internal',
+    foremanId: '4',
+    memberIds: ['5'],
+    equipment: ['Aerial Lift #2', 'Service Van #5'],
+    defaultWorkRegion: 'Suburban Zone',
+    assignedUnitsCount: 5,
+    isActive: true,
+    createdAt: '2024-04-01',
+  },
+];
+
+// Time Tracking for Units
+export interface UnitTimeEntry {
+  id: string;
+  unitId: string;
+  crewId: string;
+  userId: string;
+  startTime: string;
+  endTime?: string;
+  totalMinutes?: number;
+  notes?: string;
+}
+
+export const mockTimeEntries: UnitTimeEntry[] = [
+  {
+    id: 'te1',
+    unitId: 'u1',
+    crewId: 'crew1',
+    userId: '5',
+    startTime: '2024-03-15T08:00:00Z',
+    endTime: '2024-03-15T12:30:00Z',
+    totalMinutes: 270,
+    notes: 'Morning shift',
+  },
+  {
+    id: 'te2',
+    unitId: 'u1',
+    crewId: 'crew1',
+    userId: '5',
+    startTime: '2024-03-15T13:00:00Z',
+    endTime: '2024-03-15T17:00:00Z',
+    totalMinutes: 240,
+  },
+];
