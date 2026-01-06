@@ -19,7 +19,6 @@ import Verification from "./pages/Verification";
 import ChangeOrders from "./pages/ChangeOrders";
 import Completion from "./pages/Completion";
 import Profile from "./pages/Profile";
-import Settings from "./pages/Settings";
 import PlaceholderPage from "./pages/PlaceholderPage";
 import NotFound from "./pages/NotFound";
 
@@ -47,7 +46,6 @@ const App = () => (
               <Route path="/change-orders" element={<ChangeOrders />} />
               <Route path="/reports" element={<Completion />} />
               <Route path="/profile" element={<Profile />} />
-              <Route path="/settings" element={<Settings />} />
               <Route path="/admin" element={<Admin />} />
             </Route>
             <Route path="*" element={<NotFound />} />

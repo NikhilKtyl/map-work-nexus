@@ -10,7 +10,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Bell, ChevronDown, LogOut, Settings, User } from 'lucide-react';
+import { Bell, ChevronDown, LogOut, User } from 'lucide-react';
 
 const Header: React.FC = () => {
   const { user, logout } = useAuth();
@@ -70,13 +70,6 @@ const Header: React.FC = () => {
             >
               <User className="w-4 h-4 mr-2" />
               Profile
-            </DropdownMenuItem>
-            <DropdownMenuItem 
-              onClick={() => navigate('/settings')}
-              className="text-muted-foreground focus:bg-muted focus:text-foreground cursor-pointer"
-            >
-              <Settings className="w-4 h-4 mr-2" />
-              Settings
             </DropdownMenuItem>
             <DropdownMenuSeparator className="bg-border" />
             <DropdownMenuItem
