@@ -29,7 +29,7 @@ type DrawingTool = 'select' | 'line' | 'marker' | null;
 const Map: React.FC = () => {
   const [activeTool, setActiveTool] = useState<DrawingTool>('select');
   const [baseMapType, setBaseMapType] = useState<'streets' | 'satellite'>('streets');
-  const [selectedProject, setSelectedProject] = useState<string>(mockProjects[0]?.id || '');
+  const [selectedProject, setSelectedProject] = useState<string>('');
   const [selectedMapFile, setSelectedMapFile] = useState<string>('');
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [layers, setLayers] = useState({
@@ -337,21 +337,17 @@ const Map: React.FC = () => {
           </Card>
 
           {/* Zoom Controls */}
-          <Card className="shadow-lg">
-            <CardContent className="p-1">
-              <div className="flex flex-col gap-1">
-                <Button variant="ghost" size="icon" className="h-8 w-8">
-                  <ZoomIn className="w-4 h-4" />
-                </Button>
-                <Button variant="ghost" size="icon" className="h-8 w-8">
-                  <ZoomOut className="w-4 h-4" />
-                </Button>
-                <Button variant="ghost" size="icon" className="h-8 w-8">
-                  <Maximize2 className="w-4 h-4" />
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+          <div className="flex flex-col gap-1">
+            <Button variant="secondary" size="icon" className="h-8 w-8 shadow-md">
+              <ZoomIn className="w-4 h-4" />
+            </Button>
+            <Button variant="secondary" size="icon" className="h-8 w-8 shadow-md">
+              <ZoomOut className="w-4 h-4" />
+            </Button>
+            <Button variant="secondary" size="icon" className="h-8 w-8 shadow-md">
+              <Maximize2 className="w-4 h-4" />
+            </Button>
+          </div>
         </div>
 
         {/* Status Bar */}
