@@ -71,7 +71,7 @@ const navItems: NavItem[] = [
     roles: ['admin', 'pc', 'fm', 'accounting'],
   },
   {
-    label: 'Admin',
+    label: 'User Management',
     icon: <Settings className="w-5 h-5" />,
     path: '/admin',
     roles: ['admin'],
