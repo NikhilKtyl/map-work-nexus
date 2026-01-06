@@ -18,8 +18,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Project, mockCustomers, mockUsers, mockProjects } from '@/data/mockData';
-import { Loader2, Plus } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { Loader2 } from 'lucide-react';
 
 interface ProjectModalProps {
   open: boolean;
@@ -29,7 +28,6 @@ interface ProjectModalProps {
 }
 
 const ProjectModal: React.FC<ProjectModalProps> = ({ open, onClose, project, onSave }) => {
-  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: '',
     code: '',
@@ -166,35 +164,21 @@ const ProjectModal: React.FC<ProjectModalProps> = ({ open, onClose, project, onS
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="customer" className="text-card-foreground">Customer *</Label>
-              <div className="flex gap-2">
-                <Select
-                  value={formData.customerId}
-                  onValueChange={handleCustomerChange}
-                >
-                  <SelectTrigger className="bg-muted border-border text-card-foreground flex-1">
-                    <SelectValue placeholder="Select customer" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-card border-border">
-                    {activeCustomers.map((customer) => (
-                      <SelectItem key={customer.id} value={customer.id} className="text-card-foreground">
-                        <span className="flex items-center gap-2">
-                          <span className="text-xs text-muted-foreground">[{customer.code}]</span>
-                          {customer.name}
-                        </span>
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="icon"
-                  onClick={() => navigate('/customers')}
-                  title="Add new customer"
-                >
-                  <Plus className="w-4 h-4" />
-                </Button>
-              </div>
+              <Select
+                value={formData.customerId}
+                onValueChange={handleCustomerChange}
+              >
+                <SelectTrigger className="bg-muted border-border text-card-foreground">
+                  <SelectValue placeholder="Select customer" />
+                </SelectTrigger>
+                <SelectContent className="bg-card border-border">
+                  {activeCustomers.map((customer) => (
+                    <SelectItem key={customer.id} value={customer.id} className="text-card-foreground">
+                      {customer.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
             <div className="space-y-2">
