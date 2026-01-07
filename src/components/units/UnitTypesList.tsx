@@ -17,17 +17,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 import { UnitType, customers } from '@/data/mockData';
 import {
   Plus,
   Search,
-  MoreHorizontal,
   Pencil,
   Archive,
   Minus,
@@ -135,7 +128,7 @@ const UnitTypesList: React.FC<UnitTypesListProps> = ({
               <TableHead className="text-muted-foreground font-medium">Sub Rate</TableHead>
               <TableHead className="text-muted-foreground font-medium">Requirements</TableHead>
               <TableHead className="text-muted-foreground font-medium">Status</TableHead>
-              <TableHead className="text-muted-foreground font-medium w-10"></TableHead>
+              <TableHead className="text-muted-foreground font-medium text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -201,24 +194,27 @@ const UnitTypesList: React.FC<UnitTypesListProps> = ({
                     {type.isActive ? 'Active' : 'Inactive'}
                   </Badge>
                 </TableCell>
-                <TableCell onClick={(e) => e.stopPropagation()}>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="icon" className="h-8 w-8">
-                        <MoreHorizontal className="w-4 h-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="bg-card border-border">
-                      <DropdownMenuItem onClick={() => onEditType(type)}>
-                        <Pencil className="w-4 h-4 mr-2" />
-                        Edit
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => onToggleActive(type.id)}>
-                        <Archive className="w-4 h-4 mr-2" />
-                        {type.isActive ? 'Deactivate' : 'Activate'}
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+                <TableCell className="text-right" onClick={(e) => e.stopPropagation()}>
+                  <div className="flex items-center justify-end gap-1">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8"
+                      onClick={() => onEditType(type)}
+                      title="Edit"
+                    >
+                      <Pencil className="w-4 h-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8"
+                      onClick={() => onToggleActive(type.id)}
+                      title={type.isActive ? 'Deactivate' : 'Activate'}
+                    >
+                      <Archive className="w-4 h-4" />
+                    </Button>
+                  </div>
                 </TableCell>
               </TableRow>
             ))}

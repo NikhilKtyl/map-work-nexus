@@ -18,21 +18,21 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { Checkbox } from '@/components/ui/checkbox';
 import { mockCrews, mockUsers, Crew, Unit } from '@/data/mockData';
-import { Users, MoreHorizontal, Plus, UserPlus, X } from 'lucide-react';
+import { Users, Plus, UserPlus, X } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 interface ProjectCrewsTabProps {
@@ -344,7 +344,7 @@ const ProjectCrewsTab: React.FC<ProjectCrewsTabProps> = ({ projectId, units }) =
               <TableHead className="text-muted-foreground">Length</TableHead>
               <TableHead className="text-muted-foreground">Status</TableHead>
               <TableHead className="text-muted-foreground">Assigned Crew</TableHead>
-              <TableHead className="w-[60px]"></TableHead>
+              <TableHead className="text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -411,31 +411,27 @@ const ProjectCrewsTab: React.FC<ProjectCrewsTabProps> = ({ projectId, units }) =
                         <span className="text-muted-foreground">Unassigned</span>
                       )}
                     </TableCell>
-                    <TableCell>
-                      {!isAssigned && (
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="icon" className="h-8 w-8">
-                              <MoreHorizontal className="w-4 h-4" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end" className="bg-card border-border">
+                    <TableCell className="text-right">
+                      {!isAssigned && projectCrews.length > 0 && (
+                        <Select
+                          onValueChange={(crewId) => {
+                            toast({
+                              title: 'Unit assigned',
+                              description: `${unit.code} assigned to ${projectCrews.find(c => c.id === crewId)?.name}`,
+                            });
+                          }}
+                        >
+                          <SelectTrigger className="h-8 w-[140px] bg-background border-border">
+                            <SelectValue placeholder="Assign crew..." />
+                          </SelectTrigger>
+                          <SelectContent>
                             {projectCrews.map((crew) => (
-                              <DropdownMenuItem
-                                key={crew.id}
-                                onClick={() => {
-                                  toast({
-                                    title: 'Unit assigned',
-                                    description: `${unit.code} assigned to ${crew.name}`,
-                                  });
-                                }}
-                                className="text-foreground focus:bg-muted"
-                              >
-                                Assign to {crew.name}
-                              </DropdownMenuItem>
+                              <SelectItem key={crew.id} value={crew.id}>
+                                {crew.name}
+                              </SelectItem>
                             ))}
-                          </DropdownMenuContent>
-                        </DropdownMenu>
+                          </SelectContent>
+                        </Select>
                       )}
                     </TableCell>
                   </TableRow>

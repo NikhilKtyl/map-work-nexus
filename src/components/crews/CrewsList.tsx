@@ -9,13 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { MoreHorizontal, Pencil, Eye, Users, Plus } from 'lucide-react';
+import { Pencil, Eye, Users, Plus } from 'lucide-react';
 import { Crew, mockUsers } from '@/data/mockData';
 
 interface CrewsListProps {
@@ -60,7 +54,7 @@ const CrewsList: React.FC<CrewsListProps> = ({
               <TableHead className="text-center">Members</TableHead>
               <TableHead className="text-center">Assigned Units</TableHead>
               <TableHead>Status</TableHead>
-              <TableHead className="w-12"></TableHead>
+              <TableHead className="text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -112,24 +106,27 @@ const CrewsList: React.FC<CrewsListProps> = ({
                         {crew.isActive ? 'Active' : 'Inactive'}
                       </Badge>
                     </TableCell>
-                    <TableCell>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon" className="h-8 w-8">
-                            <MoreHorizontal className="w-4 h-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem onClick={() => onEditCrew(crew)}>
-                            <Pencil className="w-4 h-4 mr-2" />
-                            Edit Crew
-                          </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => onViewUnits(crew)}>
-                            <Eye className="w-4 h-4 mr-2" />
-                            View Assigned Units
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
+                    <TableCell className="text-right">
+                      <div className="flex items-center justify-end gap-1">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8"
+                          onClick={() => onEditCrew(crew)}
+                          title="Edit Crew"
+                        >
+                          <Pencil className="w-4 h-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8"
+                          onClick={() => onViewUnits(crew)}
+                          title="View Assigned Units"
+                        >
+                          <Eye className="w-4 h-4" />
+                        </Button>
+                      </div>
                     </TableCell>
                   </TableRow>
                 );

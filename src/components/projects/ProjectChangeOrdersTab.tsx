@@ -11,12 +11,6 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import {
   mockChangeOrders,
   mockUsers,
   ChangeOrder,
@@ -25,8 +19,7 @@ import ChangeOrderModal from '@/components/change-orders/ChangeOrderModal';
 import ChangeOrderDetail from '@/components/change-orders/ChangeOrderDetail';
 import {
   Plus,
-  MoreHorizontal,
-  FileText,
+  Eye,
   Clock,
   CheckCircle,
   XCircle,
@@ -181,7 +174,7 @@ const ProjectChangeOrdersTab: React.FC<ProjectChangeOrdersTabProps> = ({ project
                 <TableHead className="text-muted-foreground">Status</TableHead>
                 <TableHead className="text-muted-foreground">Requested By</TableHead>
                 <TableHead className="text-muted-foreground">Date</TableHead>
-                <TableHead className="w-[60px]"></TableHead>
+                <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -233,47 +226,40 @@ const ProjectChangeOrdersTab: React.FC<ProjectChangeOrdersTabProps> = ({ project
                       <TableCell className="text-muted-foreground">
                         {format(new Date(co.createdAt), 'MMM d, yyyy')}
                       </TableCell>
-                      <TableCell>
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
-                            <Button variant="ghost" size="icon" className="h-8 w-8">
-                              <MoreHorizontal className="w-4 h-4" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end" className="bg-card border-border">
-                            <DropdownMenuItem
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setSelectedCO(co);
-                              }}
-                              className="text-foreground focus:bg-muted"
-                            >
-                              View Details
-                            </DropdownMenuItem>
-                            {co.status === 'open' && (
-                              <>
-                                <DropdownMenuItem
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleApprove(co);
-                                  }}
-                                  className="text-success focus:bg-muted"
-                                >
-                                  Approve
-                                </DropdownMenuItem>
-                                <DropdownMenuItem
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleReject(co);
-                                  }}
-                                  className="text-destructive focus:bg-muted"
-                                >
-                                  Reject
-                                </DropdownMenuItem>
-                              </>
-                            )}
-                          </DropdownMenuContent>
-                        </DropdownMenu>
+                      <TableCell className="text-right">
+                        <div className="flex items-center justify-end gap-1" onClick={(e) => e.stopPropagation()}>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8"
+                            onClick={() => setSelectedCO(co)}
+                            title="View Details"
+                          >
+                            <Eye className="w-4 h-4" />
+                          </Button>
+                          {co.status === 'open' && (
+                            <>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8 text-success hover:text-success"
+                                onClick={() => handleApprove(co)}
+                                title="Approve"
+                              >
+                                <CheckCircle className="w-4 h-4" />
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8 text-destructive hover:text-destructive"
+                                onClick={() => handleReject(co)}
+                                title="Reject"
+                              >
+                                <XCircle className="w-4 h-4" />
+                              </Button>
+                            </>
+                          )}
+                        </div>
                       </TableCell>
                     </TableRow>
                   );

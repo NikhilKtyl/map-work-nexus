@@ -9,19 +9,12 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 import { mockUsers, ManagedUser } from '@/data/mockData';
 import { getRoleLabel } from '@/contexts/AuthContext';
 import UserModal from '@/components/admin/UserModal';
 import { useToast } from '@/hooks/use-toast';
 import {
   Plus,
-  MoreHorizontal,
   Pencil,
   UserX,
   UserCheck,
@@ -133,7 +126,7 @@ const Admin: React.FC = () => {
               <TableHead className="text-muted-foreground font-medium">Role</TableHead>
               <TableHead className="text-muted-foreground font-medium">Status</TableHead>
               <TableHead className="text-muted-foreground font-medium">Created</TableHead>
-              <TableHead className="text-muted-foreground font-medium w-10"></TableHead>
+              <TableHead className="text-muted-foreground font-medium text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -163,50 +156,40 @@ const Admin: React.FC = () => {
                   </Badge>
                 </TableCell>
                 <TableCell className="text-muted-foreground">{user.createdAt}</TableCell>
-                <TableCell>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8 text-muted-foreground hover:text-card-foreground"
-                      >
-                        <MoreHorizontal className="w-4 h-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="bg-card border-border">
-                      <DropdownMenuItem
-                        onClick={() => handleEditUser(user)}
-                        className="text-card-foreground focus:bg-muted"
-                      >
-                        <Pencil className="w-4 h-4 mr-2" />
-                        Edit
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        onClick={() => handleToggleStatus(user)}
-                        className="text-card-foreground focus:bg-muted"
-                      >
-                        {user.status === 'active' ? (
-                          <>
-                            <UserX className="w-4 h-4 mr-2" />
-                            Deactivate
-                          </>
-                        ) : (
-                          <>
-                            <UserCheck className="w-4 h-4 mr-2" />
-                            Activate
-                          </>
-                        )}
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        onClick={() => handleResetPassword(user)}
-                        className="text-card-foreground focus:bg-muted"
-                      >
-                        <KeyRound className="w-4 h-4 mr-2" />
-                        Reset Password
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+                <TableCell className="text-right">
+                  <div className="flex items-center justify-end gap-1">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8"
+                      onClick={() => handleEditUser(user)}
+                      title="Edit"
+                    >
+                      <Pencil className="w-4 h-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8"
+                      onClick={() => handleToggleStatus(user)}
+                      title={user.status === 'active' ? 'Deactivate' : 'Activate'}
+                    >
+                      {user.status === 'active' ? (
+                        <UserX className="w-4 h-4" />
+                      ) : (
+                        <UserCheck className="w-4 h-4" />
+                      )}
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8"
+                      onClick={() => handleResetPassword(user)}
+                      title="Reset Password"
+                    >
+                      <KeyRound className="w-4 h-4" />
+                    </Button>
+                  </div>
                 </TableCell>
               </TableRow>
             ))}
