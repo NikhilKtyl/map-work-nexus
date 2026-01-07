@@ -20,7 +20,6 @@ import ProjectMapView from '@/components/map/ProjectMapView';
 import UnitsListComponent from '@/components/units/UnitsList';
 import UnitCreationModal from '@/components/units/UnitCreationModal';
 import UnitDetailPanel from '@/components/units/UnitDetailPanel';
-import ProjectCrewsTab from '@/components/projects/ProjectCrewsTab';
 import ProjectChangeOrdersTab from '@/components/projects/ProjectChangeOrdersTab';
 import { useToast } from '@/hooks/use-toast';
 import {
@@ -246,9 +245,6 @@ const ProjectDetail: React.FC = () => {
           <TabsTrigger value="units" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
             Units
           </TabsTrigger>
-          <TabsTrigger value="crews" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-            Crews
-          </TabsTrigger>
           <TabsTrigger value="change-orders" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
             Change Orders
           </TabsTrigger>
@@ -435,13 +431,14 @@ const ProjectDetail: React.FC = () => {
           />
         </TabsContent>
 
-        {/* Units Tab */}
         <TabsContent value="units">
           <div className="flex gap-0">
             <div className={`flex-1 transition-all ${selectedUnit ? 'mr-0' : ''}`}>
               <UnitsListComponent
                 units={units}
                 onSelectUnit={handleSelectUnit}
+                onAddUnit={() => setIsUnitCreationOpen(true)}
+                projectId={project.id}
               />
             </div>
             {selectedUnit && (
@@ -452,11 +449,6 @@ const ProjectDetail: React.FC = () => {
               />
             )}
           </div>
-        </TabsContent>
-
-        {/* Crews Tab */}
-        <TabsContent value="crews">
-          <ProjectCrewsTab projectId={project.id} units={units} />
         </TabsContent>
 
         {/* Change Orders Tab */}

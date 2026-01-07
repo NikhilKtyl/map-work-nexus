@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -18,12 +18,26 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from '@/components/ui/command';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
 import { Input } from '@/components/ui/input';
-import { mockProjects, Project, customers } from '@/data/mockData';
+import { mockProjects, Project, mockCustomers } from '@/data/mockData';
 import ProjectModal from '@/components/projects/ProjectModal';
 import { useToast } from '@/hooks/use-toast';
-import { Plus, Search, Filter, Calendar } from 'lucide-react';
+import { Plus, Search, Filter, Calendar, Check, ChevronsUpDown } from 'lucide-react';
 import { format } from 'date-fns';
+import { cn } from '@/lib/utils';
 
 const statusStyles: Record<Project['status'], string> = {
   planning: 'status-pending',
@@ -48,15 +62,70 @@ const Projects: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [customerFilter, setCustomerFilter] = useState<string>('all');
+  const [customerSearchOpen, setCustomerSearchOpen] = useState(false);
 
-  const filteredProjects = projects.filter((project) => {
-    const matchesSearch =
-      project.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      project.code.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesStatus = statusFilter === 'all' || project.status === statusFilter;
-    const matchesCustomer = customerFilter === 'all' || project.customer === customerFilter;
-    return matchesSearch && matchesStatus && matchesCustomer;
-  });
+  // Get active customers for filter
+  const activeCustomers = useMemo(() => {
+    return mockCustomers.filter((c) => c.isActive).map((c) => c.name);
+  }, []);
+
+  // Calculate progress percentage for a project
+  const getProgress = (project: Project) => {
+    return project.totalUnits > 0
+      ? Math.round((project.unitsCompleted / project.totalUnits) * 100)
+      : 0;
+  };
+
+  const filteredProjects = useMemo(() => {
+    return projects.filter((project) => {
+      const matchesSearch =
+        project.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        project.code.toLowerCase().includes(searchQuery.toLowerCase());
+      
+      // Customer filter
+      const matchesCustomer = customerFilter === 'all' || project.customer === customerFilter;
+
+      // Status filter with progress ranges for in_progress
+      let matchesStatus = true;
+      if (statusFilter !== 'all') {
+        if (statusFilter === 'planning') {
+          matchesStatus = project.status === 'planning';
+        } else if (statusFilter === 'completed') {
+          matchesStatus = project.status === 'completed';
+        } else if (statusFilter === 'change_order') {
+          // Filter for projects with change orders (mock - would check change orders in real app)
+          matchesStatus = project.status === 'in_progress';
+        } else if (statusFilter.startsWith('in_progress_')) {
+          // Progress range filters
+          const progress = getProgress(project);
+          if (project.status !== 'in_progress') {
+            matchesStatus = false;
+          } else {
+            switch (statusFilter) {
+              case 'in_progress_0_25':
+                matchesStatus = progress >= 0 && progress < 25;
+                break;
+              case 'in_progress_25_50':
+                matchesStatus = progress >= 25 && progress < 50;
+                break;
+              case 'in_progress_50_75':
+                matchesStatus = progress >= 50 && progress < 75;
+                break;
+              case 'in_progress_75_100':
+                matchesStatus = progress >= 75 && progress <= 100;
+                break;
+              default:
+                matchesStatus = true;
+            }
+          }
+        } else if (statusFilter === 'in_progress') {
+          matchesStatus = project.status === 'in_progress';
+        }
+      }
+
+      return matchesSearch && matchesStatus && matchesCustomer;
+    });
+  }, [projects, searchQuery, statusFilter, customerFilter]);
 
   const handleCreateProject = () => {
     setEditingProject(null);
@@ -133,32 +202,84 @@ const Projects: React.FC = () => {
           </div>
           
           <div className="flex gap-3">
+            {/* Status Filter with Progress Ranges */}
             <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-[150px] bg-muted border-border text-card-foreground">
+              <SelectTrigger className="w-[180px] bg-muted border-border text-card-foreground">
                 <Filter className="w-4 h-4 mr-2 text-muted-foreground" />
                 <SelectValue placeholder="Status" />
               </SelectTrigger>
               <SelectContent className="bg-card border-border">
                 <SelectItem value="all" className="text-card-foreground">All Status</SelectItem>
                 <SelectItem value="planning" className="text-card-foreground">Planning</SelectItem>
-                <SelectItem value="in_progress" className="text-card-foreground">In Progress</SelectItem>
+                <SelectItem value="in_progress" className="text-card-foreground">In Progress (All)</SelectItem>
+                <SelectItem value="in_progress_0_25" className="text-card-foreground pl-6">↳ 0-25%</SelectItem>
+                <SelectItem value="in_progress_25_50" className="text-card-foreground pl-6">↳ 25-50%</SelectItem>
+                <SelectItem value="in_progress_50_75" className="text-card-foreground pl-6">↳ 50-75%</SelectItem>
+                <SelectItem value="in_progress_75_100" className="text-card-foreground pl-6">↳ 75-100%</SelectItem>
                 <SelectItem value="completed" className="text-card-foreground">Completed</SelectItem>
+                <SelectItem value="change_order" className="text-card-foreground">Change Order</SelectItem>
               </SelectContent>
             </Select>
 
-            <Select value={customerFilter} onValueChange={setCustomerFilter}>
-              <SelectTrigger className="w-[180px] bg-muted border-border text-card-foreground">
-                <SelectValue placeholder="Customer" />
-              </SelectTrigger>
-              <SelectContent className="bg-card border-border">
-                <SelectItem value="all" className="text-card-foreground">All Customers</SelectItem>
-                {customers.map((customer) => (
-                  <SelectItem key={customer} value={customer} className="text-card-foreground">
-                    {customer}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            {/* Searchable Customer Dropdown */}
+            <Popover open={customerSearchOpen} onOpenChange={setCustomerSearchOpen}>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  role="combobox"
+                  aria-expanded={customerSearchOpen}
+                  className="w-[200px] justify-between bg-muted border-border text-card-foreground"
+                >
+                  {customerFilter === 'all'
+                    ? 'All Customers'
+                    : customerFilter}
+                  <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-[200px] p-0 bg-card border-border">
+                <Command>
+                  <CommandInput placeholder="Search customer..." />
+                  <CommandList>
+                    <CommandEmpty>No customer found.</CommandEmpty>
+                    <CommandGroup>
+                      <CommandItem
+                        value="all"
+                        onSelect={() => {
+                          setCustomerFilter('all');
+                          setCustomerSearchOpen(false);
+                        }}
+                      >
+                        <Check
+                          className={cn(
+                            'mr-2 h-4 w-4',
+                            customerFilter === 'all' ? 'opacity-100' : 'opacity-0'
+                          )}
+                        />
+                        All Customers
+                      </CommandItem>
+                      {activeCustomers.map((customer) => (
+                        <CommandItem
+                          key={customer}
+                          value={customer}
+                          onSelect={() => {
+                            setCustomerFilter(customer);
+                            setCustomerSearchOpen(false);
+                          }}
+                        >
+                          <Check
+                            className={cn(
+                              'mr-2 h-4 w-4',
+                              customerFilter === customer ? 'opacity-100' : 'opacity-0'
+                            )}
+                          />
+                          {customer}
+                        </CommandItem>
+                      ))}
+                    </CommandGroup>
+                  </CommandList>
+                </Command>
+              </PopoverContent>
+            </Popover>
           </div>
         </div>
       </div>
@@ -178,9 +299,7 @@ const Projects: React.FC = () => {
           </TableHeader>
           <TableBody>
             {filteredProjects.map((project) => {
-              const progress = project.totalUnits > 0
-                ? Math.round((project.unitsCompleted / project.totalUnits) * 100)
-                : 0;
+              const progress = getProgress(project);
               
               return (
                 <TableRow

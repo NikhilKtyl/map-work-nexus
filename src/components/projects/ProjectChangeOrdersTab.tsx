@@ -19,7 +19,6 @@ import ChangeOrderModal from '@/components/change-orders/ChangeOrderModal';
 import ChangeOrderDetail from '@/components/change-orders/ChangeOrderDetail';
 import {
   Plus,
-  Eye,
   Clock,
   CheckCircle,
   XCircle,
@@ -125,6 +124,10 @@ const ProjectChangeOrdersTab: React.FC<ProjectChangeOrdersTabProps> = ({ project
     setSelectedCO(null);
   };
 
+  const handleRowClick = (co: ChangeOrder) => {
+    setSelectedCO(co);
+  };
+
   return (
     <div className="flex gap-0">
       <div className={`flex-1 space-y-4 transition-all ${selectedCO ? 'mr-0' : ''}`}>
@@ -196,9 +199,9 @@ const ProjectChangeOrdersTab: React.FC<ProjectChangeOrdersTabProps> = ({ project
                       className={`border-border hover:bg-muted/50 cursor-pointer ${
                         selectedCO?.id === co.id ? 'bg-muted/50' : ''
                       }`}
-                      onClick={() => setSelectedCO(co)}
+                      onClick={() => handleRowClick(co)}
                     >
-                      <TableCell className="font-medium text-card-foreground">
+                      <TableCell className="font-medium text-primary hover:underline">
                         {co.code}
                       </TableCell>
                       <TableCell>
@@ -228,15 +231,6 @@ const ProjectChangeOrdersTab: React.FC<ProjectChangeOrdersTabProps> = ({ project
                       </TableCell>
                       <TableCell className="text-right">
                         <div className="flex items-center justify-end gap-1" onClick={(e) => e.stopPropagation()}>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-8 w-8"
-                            onClick={() => setSelectedCO(co)}
-                            title="View Details"
-                          >
-                            <Eye className="w-4 h-4" />
-                          </Button>
                           {co.status === 'open' && (
                             <>
                               <Button
@@ -287,6 +281,7 @@ const ProjectChangeOrdersTab: React.FC<ProjectChangeOrdersTabProps> = ({ project
         onClose={() => setIsModalOpen(false)}
         onSave={handleSave}
         changeOrder={selectedCO}
+        projectId={projectId}
       />
     </div>
   );

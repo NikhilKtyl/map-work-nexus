@@ -7,7 +7,6 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import {
@@ -18,14 +17,15 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { Upload, X } from 'lucide-react';
-import { ChangeOrder, mockProjects, mockUnits } from '@/data/mockData';
+import { Upload } from 'lucide-react';
+import { ChangeOrder, mockUnits } from '@/data/mockData';
 
 interface ChangeOrderModalProps {
   open: boolean;
   onClose: () => void;
   onSave: (data: Partial<ChangeOrder>) => void;
   changeOrder?: ChangeOrder | null;
+  projectId?: string;
 }
 
 const changeTypes = [
@@ -42,9 +42,9 @@ const ChangeOrderModal: React.FC<ChangeOrderModalProps> = ({
   onClose,
   onSave,
   changeOrder,
+  projectId,
 }) => {
   const [formData, setFormData] = useState({
-    projectId: '',
     type: 'simple' as 'simple' | 'major',
     changeCategory: '',
     description: '',
@@ -53,10 +53,12 @@ const ChangeOrderModal: React.FC<ChangeOrderModalProps> = ({
     attachments: [] as string[],
   });
 
+  // Use the provided projectId or fall back to changeOrder's projectId
+  const effectiveProjectId = projectId || changeOrder?.projectId || '';
+
   useEffect(() => {
     if (changeOrder) {
       setFormData({
-        projectId: changeOrder.projectId,
         type: changeOrder.type,
         changeCategory: changeOrder.changeCategory || '',
         description: changeOrder.description,
@@ -66,7 +68,6 @@ const ChangeOrderModal: React.FC<ChangeOrderModalProps> = ({
       });
     } else {
       setFormData({
-        projectId: '',
         type: 'simple',
         changeCategory: '',
         description: '',
@@ -81,13 +82,14 @@ const ChangeOrderModal: React.FC<ChangeOrderModalProps> = ({
     e.preventDefault();
     onSave({
       ...formData,
+      projectId: effectiveProjectId,
       id: changeOrder?.id,
       status: 'open',
     });
     onClose();
   };
 
-  const projectUnits = mockUnits.filter((u) => u.projectId === formData.projectId);
+  const projectUnits = mockUnits.filter((u) => u.projectId === effectiveProjectId);
 
   const toggleUnit = (unitId: string) => {
     setFormData((prev) => ({
@@ -114,27 +116,6 @@ const ChangeOrderModal: React.FC<ChangeOrderModalProps> = ({
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="project">Project *</Label>
-            <Select
-              value={formData.projectId}
-              onValueChange={(value) =>
-                setFormData((prev) => ({ ...prev, projectId: value, impactedUnitIds: [] }))
-              }
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select project" />
-              </SelectTrigger>
-              <SelectContent>
-                {mockProjects.map((p) => (
-                  <SelectItem key={p.id} value={p.id}>
-                    {p.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
           <div className="space-y-2">
             <Label htmlFor="changeCategory">Change Type *</Label>
             <Select
@@ -170,7 +151,7 @@ const ChangeOrderModal: React.FC<ChangeOrderModalProps> = ({
             </p>
           </div>
 
-          {formData.projectId && projectUnits.length > 0 && (
+          {effectiveProjectId && projectUnits.length > 0 && (
             <div className="space-y-2">
               <Label>Impacted Units</Label>
               <div className="flex flex-wrap gap-2 p-3 border border-border rounded-md bg-muted/30 max-h-32 overflow-y-auto">
@@ -236,7 +217,7 @@ const ChangeOrderModal: React.FC<ChangeOrderModalProps> = ({
             </Button>
             <Button
               type="submit"
-              disabled={!formData.projectId || !formData.description || !formData.changeCategory}
+              disabled={!formData.description || !formData.changeCategory}
             >
               {changeOrder ? 'Save Changes' : 'Submit Request'}
             </Button>
