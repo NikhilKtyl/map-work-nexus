@@ -16,7 +16,7 @@ import {
   ChangeOrder,
 } from '@/data/mockData';
 import ChangeOrderModal from '@/components/change-orders/ChangeOrderModal';
-import ChangeOrderDetail from '@/components/change-orders/ChangeOrderDetail';
+import ChangeOrderViewModal from '@/components/change-orders/ChangeOrderViewModal';
 import {
   Plus,
   Clock,
@@ -47,6 +47,7 @@ const ProjectChangeOrdersTab: React.FC<ProjectChangeOrdersTabProps> = ({ project
     mockChangeOrders.filter((co) => co.projectId === projectId)
   );
   const [selectedCO, setSelectedCO] = useState<ChangeOrder | null>(null);
+  const [viewCO, setViewCO] = useState<ChangeOrder | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('all');
 
@@ -103,7 +104,7 @@ const ProjectChangeOrdersTab: React.FC<ProjectChangeOrdersTabProps> = ({ project
       )
     );
     toast({ title: 'Change order approved' });
-    setSelectedCO(null);
+    setViewCO(null);
   };
 
   const handleReject = (co: ChangeOrder) => {
@@ -111,7 +112,7 @@ const ProjectChangeOrdersTab: React.FC<ProjectChangeOrdersTabProps> = ({ project
       prev.map((c) => (c.id === co.id ? { ...c, status: 'rejected' } : c))
     );
     toast({ title: 'Change order rejected' });
-    setSelectedCO(null);
+    setViewCO(null);
   };
 
   const handleApply = (co: ChangeOrder) => {
@@ -121,17 +122,17 @@ const ProjectChangeOrdersTab: React.FC<ProjectChangeOrdersTabProps> = ({ project
       )
     );
     toast({ title: 'Change order applied' });
-    setSelectedCO(null);
+    setViewCO(null);
   };
 
-  const handleRowClick = (co: ChangeOrder) => {
-    setSelectedCO(co);
+  const handleCodeClick = (co: ChangeOrder, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setViewCO(co);
   };
 
   return (
-    <div className="flex gap-0">
-      <div className={`flex-1 space-y-4 transition-all ${selectedCO ? 'mr-0' : ''}`}>
-        {/* Stats */}
+    <div className="space-y-4">
+      {/* Stats */}
         <div className="grid grid-cols-4 gap-4">
           <div className="content-panel p-4">
             <p className="text-sm text-muted-foreground">Total</p>
@@ -196,12 +197,12 @@ const ProjectChangeOrdersTab: React.FC<ProjectChangeOrdersTabProps> = ({ project
                   return (
                     <TableRow
                       key={co.id}
-                      className={`border-border hover:bg-muted/50 cursor-pointer ${
-                        selectedCO?.id === co.id ? 'bg-muted/50' : ''
-                      }`}
-                      onClick={() => handleRowClick(co)}
+                      className="border-border hover:bg-muted/50"
                     >
-                      <TableCell className="font-medium text-primary hover:underline">
+                      <TableCell 
+                        className="font-medium text-primary hover:underline cursor-pointer"
+                        onClick={(e) => handleCodeClick(co, e)}
+                      >
                         {co.code}
                       </TableCell>
                       <TableCell>
@@ -262,18 +263,15 @@ const ProjectChangeOrdersTab: React.FC<ProjectChangeOrdersTabProps> = ({ project
             </TableBody>
           </Table>
         </div>
-      </div>
-
-      {/* Detail Panel */}
-      {selectedCO && (
-        <ChangeOrderDetail
-          changeOrder={selectedCO}
-          onClose={() => setSelectedCO(null)}
-          onApprove={handleApprove}
-          onReject={handleReject}
-          onApply={handleApply}
-        />
-      )}
+      {/* View Modal */}
+      <ChangeOrderViewModal
+        open={!!viewCO}
+        onClose={() => setViewCO(null)}
+        changeOrder={viewCO}
+        onApprove={handleApprove}
+        onReject={handleReject}
+        onApply={handleApply}
+      />
 
       {/* Modal */}
       <ChangeOrderModal

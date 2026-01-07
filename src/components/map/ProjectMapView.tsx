@@ -31,7 +31,7 @@ interface ProjectMapViewProps {
 }
 
 type DrawingTool = 'select' | 'line' | 'marker' | null;
-type BaseMapStyle = 'satellite' | 'streets' | 'terrain';
+type BaseMapStyle = 'satellite' | 'terrain';
 
 const ProjectMapView: React.FC<ProjectMapViewProps> = ({
   mapSources,
@@ -87,31 +87,20 @@ const ProjectMapView: React.FC<ProjectMapViewProps> = ({
               <Label className="text-xs text-muted-foreground uppercase tracking-wide mb-2 block">
                 Base Map
               </Label>
-              <div className="flex flex-col gap-2">
-                <div className="flex gap-2">
-                  <Button
-                    variant={baseMapStyle === 'satellite' ? 'default' : 'outline'}
-                    size="sm"
-                    className="flex-1"
-                    onClick={() => setBaseMapStyle('satellite')}
-                  >
-                    <Satellite className="w-3 h-3 mr-1" />
-                    Satellite
-                  </Button>
-                  <Button
-                    variant={baseMapStyle === 'streets' ? 'default' : 'outline'}
-                    size="sm"
-                    className="flex-1"
-                    onClick={() => setBaseMapStyle('streets')}
-                  >
-                    <MapIcon className="w-3 h-3 mr-1" />
-                    Streets
-                  </Button>
-                </div>
+              <div className="flex gap-2">
+                <Button
+                  variant={baseMapStyle === 'satellite' ? 'default' : 'outline'}
+                  size="sm"
+                  className="flex-1"
+                  onClick={() => setBaseMapStyle('satellite')}
+                >
+                  <Satellite className="w-3 h-3 mr-1" />
+                  Satellite
+                </Button>
                 <Button
                   variant={baseMapStyle === 'terrain' ? 'default' : 'outline'}
                   size="sm"
-                  className="w-full"
+                  className="flex-1"
                   onClick={() => setBaseMapStyle('terrain')}
                 >
                   <Mountain className="w-3 h-3 mr-1" />

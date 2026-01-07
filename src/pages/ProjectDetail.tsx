@@ -9,9 +9,11 @@ import {
   mockUsers,
   mockMapSources,
   mockUnits,
+  mockCrews,
   Project,
   MapSource,
   Unit,
+  Crew,
 } from '@/data/mockData';
 import ProjectModal from '@/components/projects/ProjectModal';
 import MapSourcesList from '@/components/map/MapSourcesList';
@@ -21,6 +23,7 @@ import UnitsListComponent from '@/components/units/UnitsList';
 import UnitCreationModal from '@/components/units/UnitCreationModal';
 import UnitDetailPanel from '@/components/units/UnitDetailPanel';
 import ProjectChangeOrdersTab from '@/components/projects/ProjectChangeOrdersTab';
+import ProjectCrewsSection from '@/components/projects/ProjectCrewsSection';
 import { useToast } from '@/hooks/use-toast';
 import {
   ArrowLeft,
@@ -354,10 +357,6 @@ const ProjectDetail: React.FC = () => {
                   Manage Units
                 </Button>
                 <Button variant="outline" className="w-full justify-start border-border text-card-foreground hover:bg-muted">
-                  <Users className="w-4 h-4 mr-3 text-warning" />
-                  Assign Crews
-                </Button>
-                <Button variant="outline" className="w-full justify-start border-border text-card-foreground hover:bg-muted">
                   <Download className="w-4 h-4 mr-3 text-secondary" />
                   Generate As-Built
                 </Button>
@@ -407,6 +406,9 @@ const ProjectDetail: React.FC = () => {
               </div>
             </div>
           </div>
+
+          {/* Crews Section */}
+          <ProjectCrewsSection projectId={project.id} units={units} />
         </TabsContent>
 
         {/* Map Tab */}

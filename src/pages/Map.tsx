@@ -13,7 +13,6 @@ import {
   ZoomIn,
   ZoomOut,
   Maximize2,
-  Map as MapIcon,
   Satellite,
   Filter,
   FileText,
@@ -23,6 +22,7 @@ import {
   X,
   PanelLeftClose,
   PanelLeft,
+  Mountain,
 } from 'lucide-react';
 import { mockProjects, mockMapSources, MapSource } from '@/data/mockData';
 
@@ -30,7 +30,7 @@ type DrawingTool = 'select' | 'line' | 'marker' | null;
 
 const Map: React.FC = () => {
   const [activeTool, setActiveTool] = useState<DrawingTool>('select');
-  const [baseMapType, setBaseMapType] = useState<'streets' | 'satellite'>('streets');
+  const [baseMapType, setBaseMapType] = useState<'satellite' | 'terrain'>('satellite');
   const [selectedProject, setSelectedProject] = useState<string>('');
   const [selectedMapFile, setSelectedMapFile] = useState<string>('');
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
@@ -178,15 +178,6 @@ const Map: React.FC = () => {
             <Label className="text-sm font-medium">Base Map</Label>
             <div className="flex gap-2">
               <Button
-                variant={baseMapType === 'streets' ? 'default' : 'outline'}
-                size="sm"
-                className="flex-1"
-                onClick={() => setBaseMapType('streets')}
-              >
-                <MapIcon className="w-4 h-4 mr-1" />
-                Streets
-              </Button>
-              <Button
                 variant={baseMapType === 'satellite' ? 'default' : 'outline'}
                 size="sm"
                 className="flex-1"
@@ -194,6 +185,15 @@ const Map: React.FC = () => {
               >
                 <Satellite className="w-4 h-4 mr-1" />
                 Satellite
+              </Button>
+              <Button
+                variant={baseMapType === 'terrain' ? 'default' : 'outline'}
+                size="sm"
+                className="flex-1"
+                onClick={() => setBaseMapType('terrain')}
+              >
+                <Mountain className="w-4 h-4 mr-1" />
+                Terrain
               </Button>
             </div>
           </div>
@@ -256,19 +256,19 @@ const Map: React.FC = () => {
           className={`absolute inset-0 ${
             baseMapType === 'satellite'
               ? 'bg-gradient-to-br from-green-900 via-green-800 to-blue-900'
-              : 'bg-gradient-to-br from-muted via-muted/80 to-muted'
+              : 'bg-gradient-to-br from-amber-100 via-green-200 to-emerald-300'
           }`}
         >
-          {/* Grid pattern for streets view */}
-          {baseMapType === 'streets' && (
+          {/* Terrain texture for terrain view */}
+          {baseMapType === 'terrain' && (
             <div
-              className="absolute inset-0 opacity-20"
+              className="absolute inset-0 opacity-30"
               style={{
                 backgroundImage: `
-                  linear-gradient(to right, hsl(var(--border)) 1px, transparent 1px),
-                  linear-gradient(to bottom, hsl(var(--border)) 1px, transparent 1px)
+                  radial-gradient(circle at 20% 30%, rgba(139, 69, 19, 0.3) 0%, transparent 50%),
+                  radial-gradient(circle at 70% 60%, rgba(34, 139, 34, 0.3) 0%, transparent 40%),
+                  radial-gradient(circle at 50% 80%, rgba(139, 69, 19, 0.2) 0%, transparent 60%)
                 `,
-                backgroundSize: '50px 50px',
               }}
             />
           )}
