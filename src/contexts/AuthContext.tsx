@@ -102,7 +102,7 @@ export const getRoleLabel = (role: UserRole): string => {
     pc: 'Project Coordinator',
     fm: 'Field Manager',
     foreman: 'Foreman',
-    crew: 'Crew',
+    crew: 'Crew Member',
     accounting: 'Accounting',
   };
   return labels[role];

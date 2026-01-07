@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -9,8 +9,15 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { mockUsers, ManagedUser } from '@/data/mockData';
-import { getRoleLabel } from '@/contexts/AuthContext';
+import { getRoleLabel, UserRole } from '@/contexts/AuthContext';
 import UserModal from '@/components/admin/UserModal';
 import { useToast } from '@/hooks/use-toast';
 import {
@@ -20,6 +27,9 @@ import {
   UserCheck,
   KeyRound,
   Search,
+  Filter,
+  X,
+  MapPin,
 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 
@@ -28,14 +38,53 @@ const Admin: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingUser, setEditingUser] = useState<ManagedUser | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const [showFilters, setShowFilters] = useState(false);
+  const [roleFilter, setRoleFilter] = useState<'all' | UserRole>('all');
+  const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive'>('all');
+  const [locationFilter, setLocationFilter] = useState<string>('all');
   const { toast } = useToast();
 
-  const filteredUsers = users.filter(
-    (user) =>
-      user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      user.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      getRoleLabel(user.role).toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  // Get unique locations for filter
+  const uniqueLocations = useMemo(() => {
+    const locations = new Set<string>();
+    users.forEach((user) => {
+      if (user.city) {
+        locations.add(user.city);
+      }
+    });
+    return Array.from(locations).sort();
+  }, [users]);
+
+  const filteredUsers = useMemo(() => {
+    return users.filter((user) => {
+      // Search filter
+      const matchesSearch =
+        user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        user.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        getRoleLabel(user.role).toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (user.city && user.city.toLowerCase().includes(searchQuery.toLowerCase()));
+
+      // Role filter
+      const matchesRole = roleFilter === 'all' || user.role === roleFilter;
+
+      // Status filter
+      const matchesStatus = statusFilter === 'all' || user.status === statusFilter;
+
+      // Location filter
+      const matchesLocation = locationFilter === 'all' || user.city === locationFilter;
+
+      return matchesSearch && matchesRole && matchesStatus && matchesLocation;
+    });
+  }, [users, searchQuery, roleFilter, statusFilter, locationFilter]);
+
+  const hasActiveFilters = roleFilter !== 'all' || statusFilter !== 'all' || locationFilter !== 'all';
+
+  const clearFilters = () => {
+    setRoleFilter('all');
+    setStatusFilter('all');
+    setLocationFilter('all');
+    setSearchQuery('');
+  };
 
   const handleCreateUser = () => {
     setEditingUser(null);
@@ -60,6 +109,7 @@ const Admin: React.FC = () => {
         email: userData.email || '',
         role: userData.role || 'crew',
         phone: userData.phone,
+        city: userData.city,
         status: 'active',
         createdAt: new Date().toISOString().split('T')[0],
         projectAccess: userData.projectAccess || 'all',
@@ -104,16 +154,80 @@ const Admin: React.FC = () => {
       </div>
 
       {/* Search and filters */}
-      <div className="content-panel p-4">
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-          <Input
-            placeholder="Search users by name, email, or role..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10 bg-muted border-border text-card-foreground"
-          />
+      <div className="content-panel p-4 space-y-3">
+        <div className="flex flex-wrap gap-3 items-center">
+          <div className="relative flex-1 max-w-md">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <Input
+              placeholder="Search users by name, email, role, or location..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10 bg-muted border-border text-card-foreground"
+            />
+          </div>
+          <Button
+            variant={showFilters ? 'secondary' : 'outline'}
+            size="sm"
+            onClick={() => setShowFilters(!showFilters)}
+            className="gap-2"
+          >
+            <Filter className="w-4 h-4" />
+            Filters
+            {hasActiveFilters && (
+              <Badge variant="default" className="ml-1 h-5 w-5 p-0 flex items-center justify-center text-xs">
+                {[roleFilter !== 'all', statusFilter !== 'all', locationFilter !== 'all'].filter(Boolean).length}
+              </Badge>
+            )}
+          </Button>
+          {hasActiveFilters && (
+            <Button variant="ghost" size="sm" onClick={clearFilters} className="gap-1">
+              <X className="w-4 h-4" />
+              Clear
+            </Button>
+          )}
         </div>
+
+        {showFilters && (
+          <div className="flex flex-wrap gap-3 items-center p-3 bg-muted/50 rounded-lg border">
+            <Select value={roleFilter} onValueChange={(v) => setRoleFilter(v as typeof roleFilter)}>
+              <SelectTrigger className="w-[160px]">
+                <SelectValue placeholder="All Roles" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Roles</SelectItem>
+                <SelectItem value="admin">Admin / DM</SelectItem>
+                <SelectItem value="pc">Project Coordinator</SelectItem>
+                <SelectItem value="fm">Field Manager</SelectItem>
+                <SelectItem value="foreman">Foreman</SelectItem>
+                <SelectItem value="crew">Crew Member</SelectItem>
+                <SelectItem value="accounting">Accounting</SelectItem>
+              </SelectContent>
+            </Select>
+            <Select value={statusFilter} onValueChange={(v) => setStatusFilter(v as typeof statusFilter)}>
+              <SelectTrigger className="w-[140px]">
+                <SelectValue placeholder="All Status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Status</SelectItem>
+                <SelectItem value="active">Active</SelectItem>
+                <SelectItem value="inactive">Inactive</SelectItem>
+              </SelectContent>
+            </Select>
+            <Select value={locationFilter} onValueChange={setLocationFilter}>
+              <SelectTrigger className="w-[160px]">
+                <SelectValue placeholder="All Locations" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Locations</SelectItem>
+                {uniqueLocations.map((location) => (
+                  <SelectItem key={location} value={location}>
+                    {location}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        )}
       </div>
 
       {/* Users table */}
@@ -124,6 +238,7 @@ const Admin: React.FC = () => {
               <TableHead className="text-muted-foreground font-medium">Name</TableHead>
               <TableHead className="text-muted-foreground font-medium">Email</TableHead>
               <TableHead className="text-muted-foreground font-medium">Role</TableHead>
+              <TableHead className="text-muted-foreground font-medium">Location</TableHead>
               <TableHead className="text-muted-foreground font-medium">Status</TableHead>
               <TableHead className="text-muted-foreground font-medium">Created</TableHead>
               <TableHead className="text-muted-foreground font-medium text-right">Actions</TableHead>
@@ -143,6 +258,16 @@ const Admin: React.FC = () => {
                   <Badge variant="outline" className="border-primary/30 text-primary bg-primary/5">
                     {getRoleLabel(user.role)}
                   </Badge>
+                </TableCell>
+                <TableCell>
+                  {user.city ? (
+                    <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                      <MapPin className="w-3 h-3" />
+                      {user.city}
+                    </div>
+                  ) : (
+                    <span className="text-muted-foreground">-</span>
+                  )}
                 </TableCell>
                 <TableCell>
                   <Badge

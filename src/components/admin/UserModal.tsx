@@ -36,6 +36,7 @@ const UserModal: React.FC<UserModalProps> = ({ open, onClose, user, onSave }) =>
     email: '',
     role: 'crew' as UserRole,
     phone: '',
+    city: '',
     projectAccess: 'all' as 'all' | string[],
   });
   const [selectedProjects, setSelectedProjects] = useState<string[]>([]);
@@ -49,6 +50,7 @@ const UserModal: React.FC<UserModalProps> = ({ open, onClose, user, onSave }) =>
         email: user.email,
         role: user.role,
         phone: user.phone || '',
+        city: user.city || '',
         projectAccess: user.projectAccess,
       });
       setIsAllProjects(user.projectAccess === 'all');
@@ -59,6 +61,7 @@ const UserModal: React.FC<UserModalProps> = ({ open, onClose, user, onSave }) =>
         email: '',
         role: 'crew',
         phone: '',
+        city: '',
         projectAccess: 'all',
       });
       setIsAllProjects(true);
@@ -141,15 +144,27 @@ const UserModal: React.FC<UserModalProps> = ({ open, onClose, user, onSave }) =>
             </Select>
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="phone" className="text-card-foreground">Phone (optional)</Label>
-            <Input
-              id="phone"
-              type="tel"
-              value={formData.phone}
-              onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-              className="bg-muted border-border text-card-foreground"
-            />
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="phone" className="text-card-foreground">Phone (optional)</Label>
+              <Input
+                id="phone"
+                type="tel"
+                value={formData.phone}
+                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                className="bg-muted border-border text-card-foreground"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="city" className="text-card-foreground">City (optional)</Label>
+              <Input
+                id="city"
+                value={formData.city}
+                onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+                className="bg-muted border-border text-card-foreground"
+                placeholder="e.g. Austin"
+              />
+            </div>
           </div>
 
           <div className="space-y-3">
