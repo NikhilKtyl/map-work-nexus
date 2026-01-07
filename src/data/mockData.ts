@@ -6,6 +6,7 @@ export interface ManagedUser {
   email: string;
   role: UserRole;
   phone?: string;
+  city?: string;
   status: 'active' | 'inactive';
   createdAt: string;
   projectAccess: 'all' | string[];
@@ -40,6 +41,7 @@ export const mockUsers: ManagedUser[] = [
     email: 'admin@berrytech.com',
     role: 'admin',
     phone: '555-0101',
+    city: 'Austin',
     status: 'active',
     createdAt: '2024-01-15',
     projectAccess: 'all',
@@ -50,6 +52,7 @@ export const mockUsers: ManagedUser[] = [
     email: 'pc@berrytech.com',
     role: 'pc',
     phone: '555-0102',
+    city: 'Dallas',
     status: 'active',
     createdAt: '2024-02-10',
     projectAccess: 'all',
@@ -60,6 +63,7 @@ export const mockUsers: ManagedUser[] = [
     email: 'fm@berrytech.com',
     role: 'fm',
     phone: '555-0103',
+    city: 'Austin',
     status: 'active',
     createdAt: '2024-02-15',
     projectAccess: ['1', '2', '3'],
@@ -69,6 +73,7 @@ export const mockUsers: ManagedUser[] = [
     name: 'Tom Wilson',
     email: 'foreman@berrytech.com',
     role: 'foreman',
+    city: 'Houston',
     status: 'active',
     createdAt: '2024-03-01',
     projectAccess: ['1', '2'],
@@ -78,6 +83,7 @@ export const mockUsers: ManagedUser[] = [
     name: 'Chris Brown',
     email: 'crew@berrytech.com',
     role: 'crew',
+    city: 'Austin',
     status: 'active',
     createdAt: '2024-03-15',
     projectAccess: ['1'],
@@ -88,6 +94,7 @@ export const mockUsers: ManagedUser[] = [
     email: 'accounting@berrytech.com',
     role: 'accounting',
     phone: '555-0106',
+    city: 'Dallas',
     status: 'active',
     createdAt: '2024-01-20',
     projectAccess: 'all',
@@ -97,6 +104,7 @@ export const mockUsers: ManagedUser[] = [
     name: 'James Rodriguez',
     email: 'james.r@berrytech.com',
     role: 'foreman',
+    city: 'San Antonio',
     status: 'inactive',
     createdAt: '2024-01-05',
     projectAccess: ['2'],
@@ -106,6 +114,7 @@ export const mockUsers: ManagedUser[] = [
     name: 'David Martinez',
     email: 'david.m@berrytech.com',
     role: 'crew',
+    city: 'Houston',
     status: 'active',
     createdAt: '2024-03-20',
     projectAccess: ['1', '2'],
@@ -115,6 +124,7 @@ export const mockUsers: ManagedUser[] = [
     name: 'Kevin Lee',
     email: 'kevin.l@berrytech.com',
     role: 'crew',
+    city: 'Austin',
     status: 'active',
     createdAt: '2024-04-01',
     projectAccess: ['1', '2', '3'],
@@ -124,6 +134,7 @@ export const mockUsers: ManagedUser[] = [
     name: 'Ryan Thompson',
     email: 'ryan.t@berrytech.com',
     role: 'crew',
+    city: 'Dallas',
     status: 'active',
     createdAt: '2024-04-10',
     projectAccess: ['2'],
