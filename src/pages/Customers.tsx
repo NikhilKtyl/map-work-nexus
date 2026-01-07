@@ -29,7 +29,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-import { Plus, Search, Pencil, Trash2, Building2, Mail, Phone, MapPin, Eye, Home, X } from 'lucide-react';
+import { Plus, Search, Pencil, Trash2, Building2, Mail, Phone, MapPin, Eye, Home, X, Filter } from 'lucide-react';
 import { mockCustomers, Customer, mockProjects } from '@/data/mockData';
 import CustomerModal from '@/components/customers/CustomerModal';
 import { useToast } from '@/hooks/use-toast';
@@ -44,6 +44,7 @@ const Customers: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
   const [deleteCustomer, setDeleteCustomer] = useState<Customer | null>(null);
+  const [showFilters, setShowFilters] = useState(false);
   const { toast } = useToast();
 
   // Get unique locations for filter
@@ -219,21 +220,75 @@ const Customers: React.FC = () => {
       </div>
 
       {/* Search and Filters */}
-      <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
-        <div className="relative flex-1 max-w-md">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
-          <Input
-            placeholder="Search customers..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10"
-          />
-        </div>
-        {hasActiveFilters && (
-          <Button variant="ghost" size="sm" onClick={clearFilters} className="gap-1">
-            <X className="w-4 h-4" />
-            Clear filters
+      <div className="flex flex-col gap-3">
+        <div className="flex flex-wrap gap-3 items-center">
+          <div className="relative flex-1 max-w-md">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+            <Input
+              placeholder="Search customers..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10"
+            />
+          </div>
+          <Button
+            variant={showFilters ? 'secondary' : 'outline'}
+            size="sm"
+            onClick={() => setShowFilters(!showFilters)}
+            className="gap-2"
+          >
+            <Filter className="w-4 h-4" />
+            Filters
+            {(typeFilter !== 'all' || statusFilter !== 'all' || locationFilter !== 'all') && (
+              <Badge variant="default" className="ml-1 h-5 w-5 p-0 flex items-center justify-center text-xs">
+                {[typeFilter !== 'all', statusFilter !== 'all', locationFilter !== 'all'].filter(Boolean).length}
+              </Badge>
+            )}
           </Button>
+          {hasActiveFilters && (
+            <Button variant="ghost" size="sm" onClick={clearFilters} className="gap-1">
+              <X className="w-4 h-4" />
+              Clear
+            </Button>
+          )}
+        </div>
+        
+        {showFilters && (
+          <div className="flex flex-wrap gap-3 items-center p-3 bg-muted/50 rounded-lg border">
+            <Select value={typeFilter} onValueChange={(v) => setTypeFilter(v as typeof typeFilter)}>
+              <SelectTrigger className="w-[140px]">
+                <SelectValue placeholder="All types" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Types</SelectItem>
+                <SelectItem value="business">Business</SelectItem>
+                <SelectItem value="personal">Personal</SelectItem>
+              </SelectContent>
+            </Select>
+            <Select value={statusFilter} onValueChange={(v) => setStatusFilter(v as typeof statusFilter)}>
+              <SelectTrigger className="w-[140px]">
+                <SelectValue placeholder="All status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Status</SelectItem>
+                <SelectItem value="active">Active</SelectItem>
+                <SelectItem value="inactive">Inactive</SelectItem>
+              </SelectContent>
+            </Select>
+            <Select value={locationFilter} onValueChange={setLocationFilter}>
+              <SelectTrigger className="w-[160px]">
+                <SelectValue placeholder="All locations" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Locations</SelectItem>
+                {uniqueLocations.map((location) => (
+                  <SelectItem key={location} value={location}>
+                    {location}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
         )}
       </div>
 
@@ -243,56 +298,11 @@ const Customers: React.FC = () => {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>
-                  <div className="space-y-2">
-                    <span>Company / Client</span>
-                    <Select value={typeFilter} onValueChange={(v) => setTypeFilter(v as typeof typeFilter)}>
-                      <SelectTrigger className="h-8 w-[130px]">
-                        <SelectValue placeholder="All types" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="all">All Types</SelectItem>
-                        <SelectItem value="business">Business</SelectItem>
-                        <SelectItem value="personal">Personal</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </TableHead>
+                <TableHead>Company / Client</TableHead>
                 <TableHead>Contact</TableHead>
-                <TableHead>
-                  <div className="space-y-2">
-                    <span>Location</span>
-                    <Select value={locationFilter} onValueChange={setLocationFilter}>
-                      <SelectTrigger className="h-8 w-[130px]">
-                        <SelectValue placeholder="All locations" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="all">All Locations</SelectItem>
-                        {uniqueLocations.map((location) => (
-                          <SelectItem key={location} value={location}>
-                            {location}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </TableHead>
+                <TableHead>Location</TableHead>
                 <TableHead>Projects</TableHead>
-                <TableHead>
-                  <div className="space-y-2">
-                    <span>Status</span>
-                    <Select value={statusFilter} onValueChange={(v) => setStatusFilter(v as typeof statusFilter)}>
-                      <SelectTrigger className="h-8 w-[110px]">
-                        <SelectValue placeholder="All" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="all">All Status</SelectItem>
-                        <SelectItem value="active">Active</SelectItem>
-                        <SelectItem value="inactive">Inactive</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </TableHead>
+                <TableHead>Status</TableHead>
                 <TableHead className="w-[120px] text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
