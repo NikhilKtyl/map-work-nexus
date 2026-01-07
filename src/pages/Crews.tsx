@@ -8,7 +8,22 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Users, Wrench, ClipboardList, Search } from 'lucide-react';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from '@/components/ui/command';
+import { Button } from '@/components/ui/button';
+import { Users, Wrench, ClipboardList, Search, ChevronsUpDown, Check } from 'lucide-react';
+import { cn } from '@/lib/utils';
 import { mockCrews, Crew } from '@/data/mockData';
 import CrewsList from '@/components/crews/CrewsList';
 import CrewModal from '@/components/crews/CrewModal';
@@ -145,20 +160,57 @@ const Crews: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-2 min-w-[200px]">
-          <Select value={crewNameFilter} onValueChange={setCrewNameFilter}>
-            <SelectTrigger>
-              <Search className="w-4 h-4 mr-2 text-muted-foreground" />
-              <SelectValue placeholder="Crew Name" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Crews</SelectItem>
-              {crews.map((crew) => (
-                <SelectItem key={crew.id} value={crew.id}>
-                  {crew.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                role="combobox"
+                className="w-full justify-between"
+              >
+                {crewNameFilter !== 'all'
+                  ? crews.find((crew) => crew.id === crewNameFilter)?.name
+                  : 'All Crews'}
+                <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-[200px] p-0">
+              <Command>
+                <CommandInput placeholder="Search crew..." />
+                <CommandList>
+                  <CommandEmpty>No crew found.</CommandEmpty>
+                  <CommandGroup>
+                    <CommandItem
+                      value="all"
+                      onSelect={() => setCrewNameFilter('all')}
+                    >
+                      <Check
+                        className={cn(
+                          'mr-2 h-4 w-4',
+                          crewNameFilter === 'all' ? 'opacity-100' : 'opacity-0'
+                        )}
+                      />
+                      All Crews
+                    </CommandItem>
+                    {crews.map((crew) => (
+                      <CommandItem
+                        key={crew.id}
+                        value={crew.name}
+                        onSelect={() => setCrewNameFilter(crew.id)}
+                      >
+                        <Check
+                          className={cn(
+                            'mr-2 h-4 w-4',
+                            crewNameFilter === crew.id ? 'opacity-100' : 'opacity-0'
+                          )}
+                        />
+                        {crew.name}
+                      </CommandItem>
+                    ))}
+                  </CommandGroup>
+                </CommandList>
+              </Command>
+            </PopoverContent>
+          </Popover>
         </div>
 
         <div className="flex items-center gap-2 min-w-[200px]">
