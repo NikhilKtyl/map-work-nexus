@@ -16,6 +16,7 @@ import Units from "./pages/Units";
 import Admin from "./pages/Admin";
 import Map from "./pages/Map";
 import Crews from "./pages/Crews";
+import CrewDetail from "./pages/CrewDetail";
 import Field from "./pages/Field";
 import Verification from "./pages/Verification";
 import ChangeOrders from "./pages/ChangeOrders";
@@ -45,6 +46,7 @@ const App = () => (
               <Route path="/map" element={<Map />} />
               <Route path="/units" element={<Units />} />
               <Route path="/crews" element={<Crews />} />
+              <Route path="/crews/:id" element={<CrewDetail />} />
               <Route path="/field" element={<Field />} />
               <Route path="/verification" element={<Verification />} />
               <Route path="/change-orders" element={<ChangeOrders />} />
