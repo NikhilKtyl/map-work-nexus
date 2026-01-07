@@ -9,7 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { MoreHorizontal, ExternalLink } from 'lucide-react';
+import { ExternalLink, Eye } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface Project {
@@ -108,7 +108,7 @@ const ProjectsTable: React.FC = () => {
             <TableHead className="text-muted-foreground font-medium">Progress</TableHead>
             <TableHead className="text-muted-foreground font-medium">Units</TableHead>
             <TableHead className="text-muted-foreground font-medium">Last Updated</TableHead>
-            <TableHead className="text-muted-foreground font-medium w-10"></TableHead>
+            <TableHead className="text-muted-foreground font-medium text-right">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -138,9 +138,14 @@ const ProjectsTable: React.FC = () => {
                 {project.unitsCompleted}/{project.totalUnits}
               </TableCell>
               <TableCell className="text-muted-foreground">{project.lastUpdated}</TableCell>
-              <TableCell>
-                <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-card-foreground">
-                  <MoreHorizontal className="w-4 h-4" />
+              <TableCell className="text-right">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8"
+                  title="View Project"
+                >
+                  <Eye className="w-4 h-4" />
                 </Button>
               </TableCell>
             </TableRow>

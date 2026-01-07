@@ -9,17 +9,10 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 import { MapSource } from '@/data/mockData';
 import { format } from 'date-fns';
 import {
   Upload,
-  MoreHorizontal,
   FileImage,
   FileText,
   MapPin,
@@ -105,7 +98,7 @@ const MapSourcesList: React.FC<MapSourcesListProps> = ({
               <TableHead className="text-muted-foreground font-medium">Size</TableHead>
               <TableHead className="text-muted-foreground font-medium">Status</TableHead>
               <TableHead className="text-muted-foreground font-medium">Uploaded</TableHead>
-              <TableHead className="text-muted-foreground font-medium w-10"></TableHead>
+              <TableHead className="text-muted-foreground font-medium text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -149,33 +142,38 @@ const MapSourcesList: React.FC<MapSourcesListProps> = ({
                   <TableCell className="text-muted-foreground text-sm">
                     {format(new Date(source.uploadDate), 'MMM d, yyyy')}
                   </TableCell>
-                  <TableCell>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon" className="h-8 w-8">
-                          <MoreHorizontal className="w-4 h-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end" className="bg-card border-border">
-                        {!source.isPrimary && (
-                          <DropdownMenuItem onClick={() => onSetPrimary(source.id)}>
-                            <Star className="w-4 h-4 mr-2" />
-                            Set as Primary
-                          </DropdownMenuItem>
-                        )}
-                        <DropdownMenuItem onClick={() => onReplace(source.id)}>
-                          <RefreshCw className="w-4 h-4 mr-2" />
-                          Replace
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          onClick={() => onRemove(source.id)}
-                          className="text-destructive focus:text-destructive"
+                  <TableCell className="text-right">
+                    <div className="flex items-center justify-end gap-1">
+                      {!source.isPrimary && (
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8"
+                          onClick={() => onSetPrimary(source.id)}
+                          title="Set as Primary"
                         >
-                          <Trash2 className="w-4 h-4 mr-2" />
-                          Remove
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
+                          <Star className="w-4 h-4" />
+                        </Button>
+                      )}
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8"
+                        onClick={() => onReplace(source.id)}
+                        title="Replace"
+                      >
+                        <RefreshCw className="w-4 h-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 text-destructive hover:text-destructive"
+                        onClick={() => onRemove(source.id)}
+                        title="Remove"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
                   </TableCell>
                 </TableRow>
               );

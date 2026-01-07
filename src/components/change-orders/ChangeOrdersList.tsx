@@ -9,13 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { MoreHorizontal, Eye, CheckCircle, XCircle, Plus } from 'lucide-react';
+import { Eye, CheckCircle, XCircle, Plus } from 'lucide-react';
 import { ChangeOrder, mockProjects, mockUsers } from '@/data/mockData';
 import { format } from 'date-fns';
 
@@ -70,7 +64,7 @@ const ChangeOrdersList: React.FC<ChangeOrdersListProps> = ({
               <TableHead>Status</TableHead>
               <TableHead>Requested By</TableHead>
               <TableHead>Date</TableHead>
-              <TableHead className="w-12"></TableHead>
+              <TableHead className="text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -111,32 +105,40 @@ const ChangeOrdersList: React.FC<ChangeOrdersListProps> = ({
                     <TableCell className="text-muted-foreground">
                       {format(new Date(co.createdAt), 'MMM d, yyyy')}
                     </TableCell>
-                    <TableCell>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon" className="h-8 w-8">
-                            <MoreHorizontal className="w-4 h-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem onClick={() => onViewDetail(co)}>
-                            <Eye className="w-4 h-4 mr-2" />
-                            View Details
-                          </DropdownMenuItem>
-                          {co.status === 'open' && (
-                            <>
-                              <DropdownMenuItem onClick={() => onApprove(co)}>
-                                <CheckCircle className="w-4 h-4 mr-2" />
-                                Approve
-                              </DropdownMenuItem>
-                              <DropdownMenuItem onClick={() => onReject(co)}>
-                                <XCircle className="w-4 h-4 mr-2" />
-                                Reject
-                              </DropdownMenuItem>
-                            </>
-                          )}
-                        </DropdownMenuContent>
-                      </DropdownMenu>
+                    <TableCell className="text-right">
+                      <div className="flex items-center justify-end gap-1">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8"
+                          onClick={() => onViewDetail(co)}
+                          title="View Details"
+                        >
+                          <Eye className="w-4 h-4" />
+                        </Button>
+                        {co.status === 'open' && (
+                          <>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8 text-green-600 hover:text-green-600"
+                              onClick={() => onApprove(co)}
+                              title="Approve"
+                            >
+                              <CheckCircle className="w-4 h-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8 text-destructive hover:text-destructive"
+                              onClick={() => onReject(co)}
+                              title="Reject"
+                            >
+                              <XCircle className="w-4 h-4" />
+                            </Button>
+                          </>
+                        )}
+                      </div>
                     </TableCell>
                   </TableRow>
                 );
