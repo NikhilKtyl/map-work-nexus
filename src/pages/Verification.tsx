@@ -20,12 +20,14 @@ const Verification: React.FC = () => {
   const [projectFilter, setProjectFilter] = useState<string>('all');
   const [crewFilter, setCrewFilter] = useState<string>('all');
   const [docFilter, setDocFilter] = useState<string>('all');
+  const [statusFilter, setStatusFilter] = useState<string>('all');
 
   // Filter units awaiting verification
   const pendingUnits = units.filter((u) => {
     if (u.status !== 'completed' && u.status !== 'needs_verification') return false;
     if (projectFilter !== 'all' && u.projectId !== projectFilter) return false;
     if (crewFilter !== 'all' && u.assignedCrewId !== crewFilter) return false;
+    if (statusFilter !== 'all' && u.status !== statusFilter) return false;
     return true;
   });
 
@@ -154,6 +156,19 @@ const Verification: React.FC = () => {
                   <SelectItem value="all">All</SelectItem>
                   <SelectItem value="complete">Complete</SelectItem>
                   <SelectItem value="missing">Missing Docs</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-1">
+              <Label className="text-xs">Status</Label>
+              <Select value={statusFilter} onValueChange={setStatusFilter}>
+                <SelectTrigger className="w-40">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Statuses</SelectItem>
+                  <SelectItem value="completed">Completed</SelectItem>
+                  <SelectItem value="needs_verification">Needs Review</SelectItem>
                 </SelectContent>
               </Select>
             </div>
