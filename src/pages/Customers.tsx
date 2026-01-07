@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -12,6 +13,13 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
@@ -21,26 +29,60 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-import { Plus, Search, Pencil, Trash2, Building2, Mail, Phone, MapPin } from 'lucide-react';
+import { Plus, Search, Pencil, Trash2, Building2, Mail, Phone, MapPin, Eye, Home, X } from 'lucide-react';
 import { mockCustomers, Customer, mockProjects } from '@/data/mockData';
 import CustomerModal from '@/components/customers/CustomerModal';
 import { useToast } from '@/hooks/use-toast';
 
 const Customers: React.FC = () => {
+  const navigate = useNavigate();
   const [customers, setCustomers] = useState<Customer[]>(mockCustomers);
   const [searchQuery, setSearchQuery] = useState('');
+  const [typeFilter, setTypeFilter] = useState<'all' | 'business' | 'personal'>('all');
+  const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive'>('all');
+  const [locationFilter, setLocationFilter] = useState<string>('all');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
   const [deleteCustomer, setDeleteCustomer] = useState<Customer | null>(null);
   const { toast } = useToast();
 
-  const filteredCustomers = customers.filter(
-    (customer) =>
-      customer.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      customer.code.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      customer.contactName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      customer.city.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  // Get unique locations for filter
+  const uniqueLocations = useMemo(() => {
+    const locations = new Set<string>();
+    customers.forEach((customer) => {
+      if (customer.city) {
+        locations.add(customer.city);
+      }
+    });
+    return Array.from(locations).sort();
+  }, [customers]);
+
+  const filteredCustomers = useMemo(() => {
+    return customers.filter((customer) => {
+      // Search filter
+      const matchesSearch =
+        customer.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        customer.code.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        customer.contactName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        customer.city.toLowerCase().includes(searchQuery.toLowerCase());
+
+      // Type filter
+      const matchesType =
+        typeFilter === 'all' || (customer.type || 'business') === typeFilter;
+
+      // Status filter
+      const matchesStatus =
+        statusFilter === 'all' ||
+        (statusFilter === 'active' && customer.isActive) ||
+        (statusFilter === 'inactive' && !customer.isActive);
+
+      // Location filter
+      const matchesLocation =
+        locationFilter === 'all' || customer.city === locationFilter;
+
+      return matchesSearch && matchesType && matchesStatus && matchesLocation;
+    });
+  }, [customers, searchQuery, typeFilter, statusFilter, locationFilter]);
 
   const getProjectCount = (customerName: string) => {
     return mockProjects.filter((p) => p.customer === customerName).length;
@@ -56,6 +98,10 @@ const Customers: React.FC = () => {
     setIsModalOpen(true);
   };
 
+  const handleViewCustomer = (customer: Customer) => {
+    navigate(`/customers/${customer.id}`);
+  };
+
   const handleSaveCustomer = (data: Partial<Customer>) => {
     if (data.id) {
       // Update existing
@@ -64,17 +110,19 @@ const Customers: React.FC = () => {
       );
       toast({
         title: 'Customer Updated',
-        description: `${data.name} has been updated successfully.`,
+        description: `${data.name || data.contactName} has been updated successfully.`,
       });
     } else {
       // Create new
       const newCustomer: Customer = {
         id: `cust${Date.now()}`,
-        name: data.name || '',
+        name: data.name || data.contactName || '',
         code: data.code || '',
+        type: data.type || 'business',
         contactName: data.contactName || '',
         contactEmail: data.contactEmail || '',
         contactPhone: data.contactPhone || '',
+        additionalContacts: data.additionalContacts,
         address: data.address || '',
         city: data.city || '',
         state: data.state || '',
@@ -86,7 +134,7 @@ const Customers: React.FC = () => {
       setCustomers((prev) => [...prev, newCustomer]);
       toast({
         title: 'Customer Created',
-        description: `${newCustomer.name} has been added successfully.`,
+        description: `${newCustomer.name || newCustomer.contactName} has been added successfully.`,
       });
     }
   };
@@ -114,6 +162,16 @@ const Customers: React.FC = () => {
       setDeleteCustomer(null);
     }
   };
+
+  const clearFilters = () => {
+    setTypeFilter('all');
+    setStatusFilter('all');
+    setLocationFilter('all');
+    setSearchQuery('');
+  };
+
+  const hasActiveFilters =
+    typeFilter !== 'all' || statusFilter !== 'all' || locationFilter !== 'all' || searchQuery !== '';
 
   const activeCount = customers.filter((c) => c.isActive).length;
   const totalProjects = customers.reduce((acc, c) => acc + getProjectCount(c.name), 0);
@@ -160,29 +218,82 @@ const Customers: React.FC = () => {
         </Card>
       </div>
 
-      {/* Search */}
-      <div className="relative max-w-md">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
-        <Input
-          placeholder="Search customers..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="pl-10"
-        />
+      {/* Search and Filters */}
+      <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
+        <div className="relative flex-1 max-w-md">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+          <Input
+            placeholder="Search customers..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-10"
+          />
+        </div>
+        {hasActiveFilters && (
+          <Button variant="ghost" size="sm" onClick={clearFilters} className="gap-1">
+            <X className="w-4 h-4" />
+            Clear filters
+          </Button>
+        )}
       </div>
 
-      {/* Table */}
+      {/* Table with inline filters */}
       <Card>
         <CardContent className="p-0">
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Company</TableHead>
+                <TableHead>
+                  <div className="space-y-2">
+                    <span>Company / Client</span>
+                    <Select value={typeFilter} onValueChange={(v) => setTypeFilter(v as typeof typeFilter)}>
+                      <SelectTrigger className="h-8 w-[130px]">
+                        <SelectValue placeholder="All types" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All Types</SelectItem>
+                        <SelectItem value="business">Business</SelectItem>
+                        <SelectItem value="personal">Personal</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </TableHead>
                 <TableHead>Contact</TableHead>
-                <TableHead>Location</TableHead>
+                <TableHead>
+                  <div className="space-y-2">
+                    <span>Location</span>
+                    <Select value={locationFilter} onValueChange={setLocationFilter}>
+                      <SelectTrigger className="h-8 w-[130px]">
+                        <SelectValue placeholder="All locations" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All Locations</SelectItem>
+                        {uniqueLocations.map((location) => (
+                          <SelectItem key={location} value={location}>
+                            {location}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </TableHead>
                 <TableHead>Projects</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead className="w-[100px] text-right">Actions</TableHead>
+                <TableHead>
+                  <div className="space-y-2">
+                    <span>Status</span>
+                    <Select value={statusFilter} onValueChange={(v) => setStatusFilter(v as typeof statusFilter)}>
+                      <SelectTrigger className="h-8 w-[110px]">
+                        <SelectValue placeholder="All" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All Status</SelectItem>
+                        <SelectItem value="active">Active</SelectItem>
+                        <SelectItem value="inactive">Inactive</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </TableHead>
+                <TableHead className="w-[120px] text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -194,14 +305,25 @@ const Customers: React.FC = () => {
                 </TableRow>
               ) : (
                 filteredCustomers.map((customer) => (
-                  <TableRow key={customer.id} className="cursor-pointer hover:bg-muted/50">
+                  <TableRow
+                    key={customer.id}
+                    className="cursor-pointer hover:bg-muted/50"
+                    onClick={() => handleViewCustomer(customer)}
+                  >
                     <TableCell>
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                          <Building2 className="w-5 h-5 text-primary" />
+                          {(customer.type || 'business') === 'personal' ? (
+                            <Home className="w-5 h-5 text-primary" />
+                          ) : (
+                            <Building2 className="w-5 h-5 text-primary" />
+                          )}
                         </div>
                         <div>
-                          <div className="font-medium">{customer.name}</div>
+                          <div className="font-medium">{customer.name || customer.contactName}</div>
+                          <Badge variant="outline" className="text-xs mt-1">
+                            {(customer.type || 'business') === 'business' ? 'Business' : 'Personal'}
+                          </Badge>
                         </div>
                       </div>
                     </TableCell>
@@ -242,6 +364,17 @@ const Customers: React.FC = () => {
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex items-center justify-end gap-1">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleViewCustomer(customer);
+                          }}
+                        >
+                          <Eye className="w-4 h-4" />
+                        </Button>
                         <Button
                           variant="ghost"
                           size="icon"

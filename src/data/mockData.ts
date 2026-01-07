@@ -247,13 +247,24 @@ export const mockProjects: Project[] = [
 ];
 
 // Customers
+export interface CustomerContact {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  role?: string;
+  isPrimary: boolean;
+}
+
 export interface Customer {
   id: string;
   name: string;
   code: string;
+  type: 'business' | 'personal';
   contactName: string;
   contactEmail: string;
   contactPhone: string;
+  additionalContacts?: CustomerContact[];
   address: string;
   city: string;
   state: string;
@@ -268,9 +279,13 @@ export const mockCustomers: Customer[] = [
     id: 'cust1',
     name: 'Metro Telecom',
     code: 'MT',
+    type: 'business',
     contactName: 'John Smith',
     contactEmail: 'jsmith@metrotelecom.com',
     contactPhone: '555-100-1001',
+    additionalContacts: [
+      { id: 'c1-1', name: 'Jane Doe', email: 'jdoe@metrotelecom.com', phone: '555-100-1002', role: 'Project Manager', isPrimary: false },
+    ],
     address: '123 Downtown Blvd',
     city: 'Metro City',
     state: 'CA',
@@ -283,6 +298,7 @@ export const mockCustomers: Customer[] = [
     id: 'cust2',
     name: 'CityConnect ISP',
     code: 'CC',
+    type: 'business',
     contactName: 'Sarah Johnson',
     contactEmail: 'sjohnson@cityconnect.net',
     contactPhone: '555-200-2002',
@@ -298,6 +314,7 @@ export const mockCustomers: Customer[] = [
     id: 'cust3',
     name: 'TechZone Solutions',
     code: 'TZ',
+    type: 'business',
     contactName: 'Michael Chen',
     contactEmail: 'mchen@techzone.io',
     contactPhone: '555-300-3003',
@@ -313,6 +330,7 @@ export const mockCustomers: Customer[] = [
     id: 'cust4',
     name: 'HomeNet Services',
     code: 'HN',
+    type: 'business',
     contactName: 'Lisa Brown',
     contactEmail: 'lbrown@homenet.com',
     contactPhone: '555-400-4004',
@@ -328,6 +346,7 @@ export const mockCustomers: Customer[] = [
     id: 'cust5',
     name: 'EnterpriseCom',
     code: 'EC',
+    type: 'business',
     contactName: 'David Martinez',
     contactEmail: 'dmartinez@enterprisecom.net',
     contactPhone: '555-500-5005',
@@ -343,6 +362,7 @@ export const mockCustomers: Customer[] = [
     id: 'cust6',
     name: 'FiberFirst Networks',
     code: 'FF',
+    type: 'business',
     contactName: 'Emily White',
     contactEmail: 'ewhite@fiberfirst.net',
     contactPhone: '555-600-6006',
@@ -358,6 +378,7 @@ export const mockCustomers: Customer[] = [
     id: 'cust7',
     name: 'ConnectAll Inc.',
     code: 'CA',
+    type: 'business',
     contactName: 'Robert Taylor',
     contactEmail: 'rtaylor@connectall.com',
     contactPhone: '555-700-7007',
@@ -368,6 +389,22 @@ export const mockCustomers: Customer[] = [
     notes: 'Inactive - contract ended',
     isActive: false,
     createdAt: '2022-11-15',
+  },
+  {
+    id: 'cust8',
+    name: '',
+    code: 'JW',
+    type: 'personal',
+    contactName: 'James Wilson',
+    contactEmail: 'jwilson@email.com',
+    contactPhone: '555-800-8008',
+    address: '42 Oak Street',
+    city: 'Riverside',
+    state: 'CA',
+    zipCode: '92502',
+    notes: 'Residential fiber installation',
+    isActive: true,
+    createdAt: '2024-02-15',
   },
 ];
 
