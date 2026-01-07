@@ -1,7 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Users, Wrench, ClipboardList } from 'lucide-react';
-import { mockCrews, mockUnits, Crew } from '@/data/mockData';
+import { Input } from '@/components/ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Users, Wrench, ClipboardList, Search } from 'lucide-react';
+import { mockCrews, Crew } from '@/data/mockData';
 import CrewsList from '@/components/crews/CrewsList';
 import CrewModal from '@/components/crews/CrewModal';
 
@@ -9,6 +17,11 @@ const Crews: React.FC = () => {
   const [crews, setCrews] = useState(mockCrews);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedCrew, setSelectedCrew] = useState<Crew | null>(null);
+
+  // Filters
+  const [typeFilter, setTypeFilter] = useState<string>('all');
+  const [crewNameFilter, setCrewNameFilter] = useState<string>('all');
+  const [statusFilter, setStatusFilter] = useState<string>('all');
 
   const handleCreateCrew = () => {
     setSelectedCrew(null);
@@ -18,11 +31,6 @@ const Crews: React.FC = () => {
   const handleEditCrew = (crew: Crew) => {
     setSelectedCrew(crew);
     setIsModalOpen(true);
-  };
-
-  const handleViewUnits = (crew: Crew) => {
-    // In a real app, this would navigate to a filtered units view
-    console.log('View units for crew:', crew.id);
   };
 
   const handleSaveCrew = (crewData: Partial<Crew>) => {
@@ -47,6 +55,19 @@ const Crews: React.FC = () => {
       setCrews((prev) => [...prev, newCrew]);
     }
   };
+
+  // Filtered crews
+  const filteredCrews = useMemo(() => {
+    return crews.filter((crew) => {
+      const matchesType = typeFilter === 'all' || crew.type === typeFilter;
+      const matchesName = crewNameFilter === 'all' || crew.id === crewNameFilter;
+      const matchesStatus =
+        statusFilter === 'all' ||
+        (statusFilter === 'active' && crew.isActive) ||
+        (statusFilter === 'inactive' && !crew.isActive);
+      return matchesType && matchesName && matchesStatus;
+    });
+  }, [crews, typeFilter, crewNameFilter, statusFilter]);
 
   // Stats
   const totalCrews = crews.length;
@@ -108,12 +129,57 @@ const Crews: React.FC = () => {
         </Card>
       </div>
 
+      {/* Filters */}
+      <div className="flex flex-wrap items-center gap-4">
+        <div className="flex items-center gap-2 min-w-[200px]">
+          <Select value={typeFilter} onValueChange={setTypeFilter}>
+            <SelectTrigger>
+              <SelectValue placeholder="Type" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Types</SelectItem>
+              <SelectItem value="internal">Internal</SelectItem>
+              <SelectItem value="subcontractor">Subcontractor</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div className="flex items-center gap-2 min-w-[200px]">
+          <Select value={crewNameFilter} onValueChange={setCrewNameFilter}>
+            <SelectTrigger>
+              <Search className="w-4 h-4 mr-2 text-muted-foreground" />
+              <SelectValue placeholder="Crew Name" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Crews</SelectItem>
+              {crews.map((crew) => (
+                <SelectItem key={crew.id} value={crew.id}>
+                  {crew.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div className="flex items-center gap-2 min-w-[200px]">
+          <Select value={statusFilter} onValueChange={setStatusFilter}>
+            <SelectTrigger>
+              <SelectValue placeholder="Status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Statuses</SelectItem>
+              <SelectItem value="active">Active</SelectItem>
+              <SelectItem value="inactive">Inactive</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+
       {/* Crews List */}
       <CrewsList
-        crews={crews}
+        crews={filteredCrews}
         onCreateCrew={handleCreateCrew}
         onEditCrew={handleEditCrew}
-        onViewUnits={handleViewUnits}
       />
 
       {/* Create/Edit Modal */}

@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -16,17 +17,21 @@ interface CrewsListProps {
   crews: Crew[];
   onCreateCrew: () => void;
   onEditCrew: (crew: Crew) => void;
-  onViewUnits: (crew: Crew) => void;
 }
 
 const CrewsList: React.FC<CrewsListProps> = ({
   crews,
   onCreateCrew,
   onEditCrew,
-  onViewUnits,
 }) => {
+  const navigate = useNavigate();
+
   const getForeman = (foremanId: string) => {
     return mockUsers.find((u) => u.id === foremanId);
+  };
+
+  const handleViewCrew = (crew: Crew) => {
+    navigate(`/crews/${crew.id}`);
   };
 
   return (
@@ -68,7 +73,11 @@ const CrewsList: React.FC<CrewsListProps> = ({
               crews.map((crew) => {
                 const foreman = getForeman(crew.foremanId);
                 return (
-                  <TableRow key={crew.id}>
+                  <TableRow 
+                    key={crew.id} 
+                    className="cursor-pointer hover:bg-muted/50"
+                    onClick={() => handleViewCrew(crew)}
+                  >
                     <TableCell className="font-medium">{crew.name}</TableCell>
                     <TableCell>
                       <Badge
@@ -112,7 +121,10 @@ const CrewsList: React.FC<CrewsListProps> = ({
                           variant="ghost"
                           size="icon"
                           className="h-8 w-8"
-                          onClick={() => onEditCrew(crew)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onEditCrew(crew);
+                          }}
                           title="Edit Crew"
                         >
                           <Pencil className="w-4 h-4" />
@@ -121,8 +133,11 @@ const CrewsList: React.FC<CrewsListProps> = ({
                           variant="ghost"
                           size="icon"
                           className="h-8 w-8"
-                          onClick={() => onViewUnits(crew)}
-                          title="View Assigned Units"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleViewCrew(crew);
+                          }}
+                          title="View Crew"
                         >
                           <Eye className="w-4 h-4" />
                         </Button>
