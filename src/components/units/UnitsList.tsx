@@ -18,13 +18,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Unit, UnitType, UnitStatus, mockUnitTypes, mockUsers } from '@/data/mockData';
+import { Unit, UnitType, UnitStatus, mockUnitTypes, mockUsers, mockCrews } from '@/data/mockData';
 import { format } from 'date-fns';
-import { Search, Minus, MapPin, Users } from 'lucide-react';
+import { Search, Minus, MapPin, Users, Plus } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 
 interface UnitsListProps {
   units: Unit[];
   onSelectUnit: (unit: Unit) => void;
+  onAddUnit?: () => void;
+  projectId?: string;
 }
 
 const statusConfig: Record<UnitStatus, { label: string; className: string }> = {
@@ -35,13 +38,15 @@ const statusConfig: Record<UnitStatus, { label: string; className: string }> = {
   verified: { label: 'Verified', className: 'status-complete' },
 };
 
-const UnitsListComponent: React.FC<UnitsListProps> = ({ units, onSelectUnit }) => {
+const UnitsListComponent: React.FC<UnitsListProps> = ({ units, onSelectUnit, onAddUnit, projectId }) => {
+  const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [typeFilter, setTypeFilter] = useState<string>('all');
   const [crewFilter, setCrewFilter] = useState<string>('all');
 
   const crews = mockUsers.filter((u) => u.role === 'crew' || u.role === 'foreman');
+  const projectCrews = mockCrews.filter((c) => c.isActive && (!projectId || c.projectIds.includes(projectId)));
 
   const getUnitType = (unitTypeId: string): UnitType | undefined => {
     return mockUnitTypes.find((ut) => ut.id === unitTypeId);
@@ -49,8 +54,22 @@ const UnitsListComponent: React.FC<UnitsListProps> = ({ units, onSelectUnit }) =
 
   const getCrewName = (crewId?: string): string => {
     if (!crewId) return 'Unassigned';
-    const crew = mockUsers.find((u) => u.id === crewId);
-    return crew?.name || 'Unknown';
+    const crew = mockCrews.find((c) => c.id === crewId);
+    if (crew) return crew.name;
+    const user = mockUsers.find((u) => u.id === crewId);
+    return user?.name || 'Unknown';
+  };
+
+  const handleAssignCrew = (unitId: string, crewId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    const crew = mockCrews.find((c) => c.id === crewId);
+    const unit = units.find((u) => u.id === unitId);
+    if (crew && unit) {
+      toast({
+        title: 'Crew Assigned',
+        description: `${unit.code} assigned to ${crew.name}`,
+      });
+    }
   };
 
   const filteredUnits = units.filter((unit) => {
@@ -94,7 +113,7 @@ const UnitsListComponent: React.FC<UnitsListProps> = ({ units, onSelectUnit }) =
         </div>
       </div>
 
-      {/* Filters */}
+      {/* Filters + Add Button */}
       <div className="content-panel p-4">
         <div className="flex flex-col md:flex-row gap-4">
           <div className="relative flex-1">
@@ -143,13 +162,20 @@ const UnitsListComponent: React.FC<UnitsListProps> = ({ units, onSelectUnit }) =
               <SelectContent className="bg-card border-border">
                 <SelectItem value="all">All Crews</SelectItem>
                 <SelectItem value="unassigned">Unassigned</SelectItem>
-                {crews.map((crew) => (
+                {projectCrews.map((crew) => (
                   <SelectItem key={crew.id} value={crew.id}>
                     {crew.name}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
+
+            {onAddUnit && (
+              <Button onClick={onAddUnit} className="gradient-primary">
+                <Plus className="w-4 h-4 mr-2" />
+                Add Unit
+              </Button>
+            )}
           </div>
         </div>
       </div>
@@ -205,13 +231,32 @@ const UnitsListComponent: React.FC<UnitsListProps> = ({ units, onSelectUnit }) =
                       {status.label}
                     </Badge>
                   </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      <Users className="w-3 h-3 text-muted-foreground" />
-                      <span className="text-muted-foreground text-sm">
-                        {getCrewName(unit.assignedCrewId)}
-                      </span>
-                    </div>
+                  <TableCell onClick={(e) => e.stopPropagation()}>
+                    <Select
+                      value={unit.assignedCrewId || 'unassigned'}
+                      onValueChange={(crewId) => {
+                        if (crewId !== 'unassigned') {
+                          handleAssignCrew(unit.id, crewId, { stopPropagation: () => {} } as React.MouseEvent);
+                        }
+                      }}
+                    >
+                      <SelectTrigger className="h-8 w-[140px] bg-background border-border">
+                        <div className="flex items-center gap-2">
+                          <Users className="w-3 h-3 text-muted-foreground" />
+                          <SelectValue>
+                            {unit.assignedCrewId ? getCrewName(unit.assignedCrewId) : 'Unassigned'}
+                          </SelectValue>
+                        </div>
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="unassigned">Unassigned</SelectItem>
+                        {projectCrews.map((crew) => (
+                          <SelectItem key={crew.id} value={crew.id}>
+                            {crew.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </TableCell>
                   <TableCell className="text-muted-foreground text-sm">
                     {format(new Date(unit.lastUpdated), 'MMM d, h:mm a')}
