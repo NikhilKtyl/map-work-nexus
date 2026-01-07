@@ -403,7 +403,7 @@ export const mockCustomers: Customer[] = [
   },
   {
     id: 'cust8',
-    name: '',
+    name: 'James Wilson',
     code: 'JW',
     type: 'personal',
     contactName: 'James Wilson',
