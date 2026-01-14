@@ -82,6 +82,18 @@ const navItems: NavItem[] = [
     roles: ['admin', 'pc', 'fm'],
   },
   {
+    label: 'Emergency Jobs',
+    icon: <Zap className="w-5 h-5" />,
+    path: '/emergency-jobs',
+    roles: ['admin', 'pc', 'fm'],
+  },
+  {
+    label: 'Change Orders',
+    icon: <FileText className="w-5 h-5" />,
+    path: '/verification',
+    roles: ['admin', 'pc', 'fm'],
+  },
+  {
     label: 'Change Orders',
     icon: <FileText className="w-5 h-5" />,
     path: '/change-orders',
