@@ -30,6 +30,12 @@ import PlaceholderPage from "./pages/PlaceholderPage";
 import NotFound from "./pages/NotFound";
 import EmergencyJobs from "./pages/EmergencyJobs";
 
+// VETRO Pages
+import VetroSettings from "./pages/settings/VetroSettings";
+import VetroImport from "./pages/vetro/VetroImport";
+import VetroExport from "./pages/vetro/VetroExport";
+import VetroLogs from "./pages/vetro/VetroLogs";
+
 // Portal Pages
 import PortalLogin from "./pages/portal/PortalLogin";
 import PortalProjects from "./pages/portal/PortalProjects";
@@ -74,6 +80,10 @@ const App = () => (
                   <Route path="/reports" element={<Completion />} />
                   <Route path="/profile" element={<Profile />} />
                   <Route path="/admin" element={<Admin />} />
+                  <Route path="/settings/vetro" element={<VetroSettings />} />
+                  <Route path="/vetro/import" element={<VetroImport />} />
+                  <Route path="/vetro/export" element={<VetroExport />} />
+                  <Route path="/vetro/logs" element={<VetroLogs />} />
                 </Route>
 
                 {/* Customer Portal Routes */}
