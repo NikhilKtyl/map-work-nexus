@@ -10,7 +10,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Bell, ChevronDown, LogOut, User } from 'lucide-react';
+import { Bell, ChevronDown, LogOut, Settings, User } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface HeaderProps {
@@ -80,6 +80,13 @@ const Header: React.FC<HeaderProps> = ({ collapsed = false }) => {
             >
               <User className="w-4 h-4 mr-2" />
               Profile
+            </DropdownMenuItem>
+            <DropdownMenuItem 
+              onClick={() => navigate('/settings/vetro')}
+              className="text-muted-foreground focus:bg-muted focus:text-foreground cursor-pointer"
+            >
+              <Settings className="w-4 h-4 mr-2" />
+              Settings
             </DropdownMenuItem>
             <DropdownMenuSeparator className="bg-border" />
             <DropdownMenuItem
