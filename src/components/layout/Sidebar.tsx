@@ -90,12 +90,6 @@ const navItems: NavItem[] = [
   {
     label: 'Change Orders',
     icon: <FileText className="w-5 h-5" />,
-    path: '/verification',
-    roles: ['admin', 'pc', 'fm'],
-  },
-  {
-    label: 'Change Orders',
-    icon: <FileText className="w-5 h-5" />,
     path: '/change-orders',
     roles: ['admin', 'pc', 'fm', 'foreman', 'accounting'],
   },
