@@ -28,6 +28,7 @@ import Completion from "./pages/Completion";
 import Profile from "./pages/Profile";
 import PlaceholderPage from "./pages/PlaceholderPage";
 import NotFound from "./pages/NotFound";
+import EmergencyJobs from "./pages/EmergencyJobs";
 
 // Portal Pages
 import PortalLogin from "./pages/portal/PortalLogin";
@@ -69,6 +70,7 @@ const App = () => (
                   <Route path="/field" element={<Field />} />
                   <Route path="/verification" element={<Verification />} />
                   <Route path="/change-orders" element={<ChangeOrders />} />
+                  <Route path="/emergency-jobs" element={<EmergencyJobs />} />
                   <Route path="/reports" element={<Completion />} />
                   <Route path="/profile" element={<Profile />} />
                   <Route path="/admin" element={<Admin />} />
