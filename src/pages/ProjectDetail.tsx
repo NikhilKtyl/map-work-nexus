@@ -24,7 +24,14 @@ import UnitCreationModal from '@/components/units/UnitCreationModal';
 import UnitDetailPanel from '@/components/units/UnitDetailPanel';
 import ProjectChangeOrdersTab from '@/components/projects/ProjectChangeOrdersTab';
 import ProjectCrewsSection from '@/components/projects/ProjectCrewsSection';
+import ProjectBOMGenerator from '@/components/bom/ProjectBOMGenerator';
 import { useToast } from '@/hooks/use-toast';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import {
   ArrowLeft,
   Pencil,
@@ -38,6 +45,7 @@ import {
   TrendingUp,
   MoreHorizontal,
   Archive,
+  Calculator,
 } from 'lucide-react';
 import { format } from 'date-fns';
 import {
@@ -66,6 +74,7 @@ const ProjectDetail: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   const [isUnitCreationOpen, setIsUnitCreationOpen] = useState(false);
+  const [isBOMGeneratorOpen, setIsBOMGeneratorOpen] = useState(false);
   const [creationGeometryType, setCreationGeometryType] = useState<'Line' | 'Marker'>('Line');
   const [selectedUnit, setSelectedUnit] = useState<Unit | null>(null);
   const [activeTab, setActiveTab] = useState('overview');
@@ -462,7 +471,7 @@ const ProjectDetail: React.FC = () => {
         <TabsContent value="exports">
           <div className="content-panel p-6">
             <h3 className="font-semibold text-card-foreground mb-4">Export Options</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="p-4 bg-muted rounded-lg border border-border">
                 <div className="flex items-center gap-3 mb-3">
                   <Download className="w-8 h-8 text-primary" />
@@ -482,6 +491,18 @@ const ProjectDetail: React.FC = () => {
                   </div>
                 </div>
                 <Button className="w-full gradient-primary">Generate CE Export</Button>
+              </div>
+              <div className="p-4 bg-muted rounded-lg border border-border">
+                <div className="flex items-center gap-3 mb-3">
+                  <Calculator className="w-8 h-8 text-secondary" />
+                  <div>
+                    <h4 className="font-medium text-card-foreground">BOM Generation</h4>
+                    <p className="text-sm text-muted-foreground">Generate bill of materials from units</p>
+                  </div>
+                </div>
+                <Button className="w-full gradient-primary" onClick={() => setIsBOMGeneratorOpen(true)}>
+                  Generate BOM
+                </Button>
               </div>
             </div>
           </div>
@@ -510,6 +531,18 @@ const ProjectDetail: React.FC = () => {
         calculatedLength={Math.floor(Math.random() * 500) + 100}
         onSave={handleSaveUnit}
       />
+
+      <Dialog open={isBOMGeneratorOpen} onOpenChange={setIsBOMGeneratorOpen}>
+        <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>BOM Suggestion Engine</DialogTitle>
+          </DialogHeader>
+          <ProjectBOMGenerator 
+            projectId={project.id} 
+            onClose={() => setIsBOMGeneratorOpen(false)} 
+          />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
