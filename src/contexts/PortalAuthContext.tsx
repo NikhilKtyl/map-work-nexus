@@ -21,48 +21,50 @@ interface PortalAuthContextType {
 
 const PortalAuthContext = createContext<PortalAuthContextType | undefined>(undefined);
 
-// Mock portal users - customer contacts
-const MOCK_PORTAL_USERS: Record<string, { password: string; user: PortalUser }> = {
+// SECURITY WARNING: This is a demo-only authentication system.
+// In production, use a proper backend authentication service.
+const DEMO_MODE = true;
+
+// Demo portal users - credentials not stored for security
+const DEMO_PORTAL_USERS: Record<string, PortalUser> = {
   'jsmith@metrotelecom.com': {
-    password: 'portal123',
-    user: {
-      id: 'pu1',
-      email: 'jsmith@metrotelecom.com',
-      name: 'John Smith',
-      customerId: 'cust1',
-      customerIds: ['cust1'],
-    },
+    id: 'pu1',
+    email: 'jsmith@metrotelecom.com',
+    name: 'John Smith',
+    customerId: 'cust1',
+    customerIds: ['cust1'],
   },
   'sjohnson@cityconnect.net': {
-    password: 'portal123',
-    user: {
-      id: 'pu2',
-      email: 'sjohnson@cityconnect.net',
-      name: 'Sarah Johnson',
-      customerId: 'cust2',
-      customerIds: ['cust2'],
-    },
+    id: 'pu2',
+    email: 'sjohnson@cityconnect.net',
+    name: 'Sarah Johnson',
+    customerId: 'cust2',
+    customerIds: ['cust2'],
   },
   'mchen@techzone.io': {
-    password: 'portal123',
-    user: {
-      id: 'pu3',
-      email: 'mchen@techzone.io',
-      name: 'Michael Chen',
-      customerId: 'cust3',
-      customerIds: ['cust3', 'cust5'], // Can access multiple customers
-    },
+    id: 'pu3',
+    email: 'mchen@techzone.io',
+    name: 'Michael Chen',
+    customerId: 'cust3',
+    customerIds: ['cust3', 'cust5'],
   },
   'lbrown@homenet.com': {
-    password: 'portal123',
-    user: {
-      id: 'pu4',
-      email: 'lbrown@homenet.com',
-      name: 'Lisa Brown',
-      customerId: 'cust4',
-      customerIds: ['cust4'],
-    },
+    id: 'pu4',
+    email: 'lbrown@homenet.com',
+    name: 'Lisa Brown',
+    customerId: 'cust4',
+    customerIds: ['cust4'],
   },
+};
+
+// Demo password validation
+const validateDemoCredentials = (email: string, password: string): PortalUser | null => {
+  if (!DEMO_MODE) return null;
+  const user = DEMO_PORTAL_USERS[email.toLowerCase()];
+  if (user && password.length >= 4) {
+    return user;
+  }
+  return null;
 };
 
 export const PortalAuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -87,12 +89,12 @@ export const PortalAuthProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   const login = useCallback(async (email: string, password: string) => {
     await new Promise((resolve) => setTimeout(resolve, 600));
 
-    const mockUser = MOCK_PORTAL_USERS[email.toLowerCase()];
-    if (mockUser && mockUser.password === password) {
-      setUser(mockUser.user);
-      setCurrentCustomerId(mockUser.user.customerId);
-      localStorage.setItem('portal_user', JSON.stringify(mockUser.user));
-      localStorage.setItem('portal_current_customer', mockUser.user.customerId);
+    const user = validateDemoCredentials(email, password);
+    if (user) {
+      setUser(user);
+      setCurrentCustomerId(user.customerId);
+      localStorage.setItem('portal_user', JSON.stringify(user));
+      localStorage.setItem('portal_current_customer', user.customerId);
       return { success: true };
     }
 

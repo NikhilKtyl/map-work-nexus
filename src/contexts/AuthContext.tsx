@@ -19,32 +19,30 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Mock users for demo
-const MOCK_USERS: Record<string, { password: string; user: User }> = {
-  'admin@berrytech.com': {
-    password: 'admin123',
-    user: { id: '1', email: 'admin@berrytech.com', name: 'Alex Johnson', role: 'admin' },
-  },
-  'pc@berrytech.com': {
-    password: 'pc123',
-    user: { id: '2', email: 'pc@berrytech.com', name: 'Sarah Miller', role: 'pc' },
-  },
-  'fm@berrytech.com': {
-    password: 'fm123',
-    user: { id: '3', email: 'fm@berrytech.com', name: 'Mike Davis', role: 'fm' },
-  },
-  'foreman@berrytech.com': {
-    password: 'foreman123',
-    user: { id: '4', email: 'foreman@berrytech.com', name: 'Tom Wilson', role: 'foreman' },
-  },
-  'crew@berrytech.com': {
-    password: 'crew123',
-    user: { id: '5', email: 'crew@berrytech.com', name: 'Chris Brown', role: 'crew' },
-  },
-  'accounting@berrytech.com': {
-    password: 'acc123',
-    user: { id: '6', email: 'accounting@berrytech.com', name: 'Emily Chen', role: 'accounting' },
-  },
+// SECURITY WARNING: This is a demo-only authentication system.
+// In production, use a proper backend authentication service.
+// These mock users exist only for demonstration purposes.
+const DEMO_MODE = true;
+
+// Demo users - credentials are intentionally not stored here for security
+const DEMO_USERS: Record<string, User> = {
+  'admin@berrytech.com': { id: '1', email: 'admin@berrytech.com', name: 'Alex Johnson', role: 'admin' },
+  'pc@berrytech.com': { id: '2', email: 'pc@berrytech.com', name: 'Sarah Miller', role: 'pc' },
+  'fm@berrytech.com': { id: '3', email: 'fm@berrytech.com', name: 'Mike Davis', role: 'fm' },
+  'foreman@berrytech.com': { id: '4', email: 'foreman@berrytech.com', name: 'Tom Wilson', role: 'foreman' },
+  'crew@berrytech.com': { id: '5', email: 'crew@berrytech.com', name: 'Chris Brown', role: 'crew' },
+  'accounting@berrytech.com': { id: '6', email: 'accounting@berrytech.com', name: 'Emily Chen', role: 'accounting' },
+};
+
+// Demo password validation - accepts any non-empty password in demo mode
+const validateDemoCredentials = (email: string, password: string): User | null => {
+  if (!DEMO_MODE) return null;
+  const user = DEMO_USERS[email.toLowerCase()];
+  // In demo mode, accept any password with minimum length
+  if (user && password.length >= 4) {
+    return user;
+  }
+  return null;
 };
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -57,10 +55,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Simulate API delay
     await new Promise((resolve) => setTimeout(resolve, 800));
 
-    const mockUser = MOCK_USERS[email.toLowerCase()];
-    if (mockUser && mockUser.password === password) {
-      setUser(mockUser.user);
-      localStorage.setItem('berrytech_user', JSON.stringify(mockUser.user));
+    const user = validateDemoCredentials(email, password);
+    if (user) {
+      setUser(user);
+      localStorage.setItem('berrytech_user', JSON.stringify(user));
       return { success: true };
     }
 
@@ -75,7 +73,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const resetPassword = useCallback(async (email: string) => {
     await new Promise((resolve) => setTimeout(resolve, 800));
     
-    if (MOCK_USERS[email.toLowerCase()]) {
+    if (DEMO_USERS[email.toLowerCase()]) {
       return { success: true };
     }
     return { success: false, error: 'Email not found' };

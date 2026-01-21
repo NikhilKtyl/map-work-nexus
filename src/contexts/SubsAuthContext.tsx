@@ -59,38 +59,43 @@ export const mockSubCompanies: SubCompany[] = [
   },
 ];
 
-// Mock subcontractor users
-const MOCK_SUB_USERS: Record<string, { password: string; user: SubUser }> = {
+// SECURITY WARNING: This is a demo-only authentication system.
+// In production, use a proper backend authentication service.
+const DEMO_MODE = true;
+
+// Demo subcontractor users - credentials not stored for security
+const DEMO_SUB_USERS: Record<string, SubUser> = {
   'john@bravocontractors.com': {
-    password: 'sub123',
-    user: {
-      id: 'su1',
-      email: 'john@bravocontractors.com',
-      name: 'John Bravo',
-      subCompanyId: 'sub1',
-      role: 'admin',
-    },
+    id: 'su1',
+    email: 'john@bravocontractors.com',
+    name: 'John Bravo',
+    subCompanyId: 'sub1',
+    role: 'admin',
   },
   'mike@bravocontractors.com': {
-    password: 'sub123',
-    user: {
-      id: 'su2',
-      email: 'mike@bravocontractors.com',
-      name: 'Mike Rivera',
-      subCompanyId: 'sub1',
-      role: 'worker',
-    },
+    id: 'su2',
+    email: 'mike@bravocontractors.com',
+    name: 'Mike Rivera',
+    subCompanyId: 'sub1',
+    role: 'worker',
   },
   'sarah@deltaunderground.com': {
-    password: 'sub123',
-    user: {
-      id: 'su3',
-      email: 'sarah@deltaunderground.com',
-      name: 'Sarah Delta',
-      subCompanyId: 'sub2',
-      role: 'admin',
-    },
+    id: 'su3',
+    email: 'sarah@deltaunderground.com',
+    name: 'Sarah Delta',
+    subCompanyId: 'sub2',
+    role: 'admin',
   },
+};
+
+// Demo password validation
+const validateDemoCredentials = (email: string, password: string): SubUser | null => {
+  if (!DEMO_MODE) return null;
+  const user = DEMO_SUB_USERS[email.toLowerCase()];
+  if (user && password.length >= 4) {
+    return user;
+  }
+  return null;
 };
 
 export const SubsAuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -106,10 +111,10 @@ export const SubsAuthProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const login = useCallback(async (email: string, password: string) => {
     await new Promise((resolve) => setTimeout(resolve, 600));
 
-    const mockUser = MOCK_SUB_USERS[email.toLowerCase()];
-    if (mockUser && mockUser.password === password) {
-      setUser(mockUser.user);
-      localStorage.setItem('subs_user', JSON.stringify(mockUser.user));
+    const user = validateDemoCredentials(email, password);
+    if (user) {
+      setUser(user);
+      localStorage.setItem('subs_user', JSON.stringify(user));
       return { success: true };
     }
 

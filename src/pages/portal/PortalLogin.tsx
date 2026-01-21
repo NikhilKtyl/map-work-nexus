@@ -106,14 +106,12 @@ const PortalLogin: React.FC = () => {
             </Button>
           </form>
 
-          {/* Demo credentials hint */}
-          <div className="mt-6 rounded-lg border border-border bg-muted/50 p-4">
-            <p className="mb-2 text-sm font-medium">Demo Accounts</p>
-            <div className="space-y-1 text-xs text-muted-foreground">
-              <p><strong>jsmith@metrotelecom.com</strong> / portal123</p>
-              <p><strong>sjohnson@cityconnect.net</strong> / portal123</p>
-              <p><strong>mchen@techzone.io</strong> / portal123 (multi-customer)</p>
-            </div>
+          {/* Demo mode warning */}
+          <div className="mt-6 rounded-lg border border-warning/30 bg-warning/10 p-4">
+            <p className="mb-1 text-sm font-medium text-warning">⚠️ Demo Mode</p>
+            <p className="text-xs text-muted-foreground">
+              This is a demonstration system. Use any registered customer email with a password of 4+ characters.
+            </p>
           </div>
         </CardContent>
       </Card>
