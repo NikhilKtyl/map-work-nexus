@@ -180,9 +180,11 @@ const Auth: React.FC = () => {
                 </Button>
               </form>
 
-              <div className="mt-8 p-4 rounded-lg bg-muted/50 border border-border">
-                <p className="text-xs text-muted-foreground mb-2">Demo credentials:</p>
-                <code className="text-xs text-card-foreground">admin@berrytech.com / admin123</code>
+              <div className="mt-8 p-4 rounded-lg bg-amber-500/10 border border-amber-500/30">
+                <p className="text-xs font-medium text-amber-600 dark:text-amber-400 mb-1">⚠️ Demo Mode</p>
+                <p className="text-xs text-muted-foreground">
+                  This is a demonstration system. Use any registered demo email with a password of 4+ characters.
+                </p>
               </div>
             </>
           )}

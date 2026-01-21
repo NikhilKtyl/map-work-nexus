@@ -100,7 +100,7 @@ const VetroSettings: React.FC = () => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* API Connection */}
+        {/* API Connection - Disabled without backend */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -110,55 +110,63 @@ const VetroSettings: React.FC = () => {
             <CardDescription>VETRO API credentials and endpoint configuration</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="space-y-2">
+            {/* Security Warning */}
+            <div className="p-4 rounded-lg bg-warning/10 border border-warning/30">
+              <div className="flex items-start gap-3">
+                <Shield className="w-5 h-5 text-warning mt-0.5" />
+                <div>
+                  <p className="text-sm font-medium text-warning">Backend Required</p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    API key management requires a backend service to securely store and proxy credentials. 
+                    Enable Lovable Cloud to configure VETRO integration securely.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="space-y-2 opacity-50">
               <Label htmlFor="apiBaseUrl">API Base URL</Label>
               <Input
                 id="apiBaseUrl"
                 value={config.apiBaseUrl}
-                onChange={(e) => setConfig((prev) => ({ ...prev, apiBaseUrl: e.target.value }))}
+                disabled
                 placeholder="https://api.vetro.io/v2"
               />
             </div>
 
-            <div className="space-y-2">
+            <div className="space-y-2 opacity-50">
               <Label htmlFor="apiKey">API Key</Label>
               <div className="flex gap-2">
                 <Input
                   id="apiKey"
-                  type={showApiKey ? 'text' : 'password'}
-                  value={config.apiKey}
-                  onChange={(e) => setConfig((prev) => ({ ...prev, apiKey: e.target.value }))}
-                  placeholder="Enter your VETRO API key"
+                  type="password"
+                  value="••••••••••••••••"
+                  disabled
+                  placeholder="Requires backend integration"
                 />
-                <Button variant="outline" size="icon" onClick={() => setShowApiKey(!showApiKey)}>
+                <Button variant="outline" size="icon" disabled>
                   <Shield className="w-4 h-4" />
                 </Button>
               </div>
+              <p className="text-xs text-muted-foreground">
+                API keys cannot be stored client-side for security reasons.
+              </p>
             </div>
 
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between opacity-50">
               <div className="space-y-0.5">
                 <Label>OAuth Authentication</Label>
                 <p className="text-sm text-muted-foreground">Use OAuth instead of API key</p>
               </div>
               <Switch
                 checked={config.oauthEnabled}
-                onCheckedChange={(checked) => setConfig((prev) => ({ ...prev, oauthEnabled: checked }))}
+                disabled
               />
             </div>
 
-            <Button variant="outline" className="w-full" onClick={handleTestConnection} disabled={isTesting}>
-              {isTesting ? (
-                <>
-                  <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
-                  Testing...
-                </>
-              ) : (
-                <>
-                  <Link2 className="w-4 h-4 mr-2" />
-                  Test Connection
-                </>
-              )}
+            <Button variant="outline" className="w-full" disabled>
+              <Link2 className="w-4 h-4 mr-2" />
+              Test Connection (Requires Backend)
             </Button>
           </CardContent>
         </Card>

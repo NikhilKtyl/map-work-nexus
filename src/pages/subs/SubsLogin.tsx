@@ -106,13 +106,12 @@ const SubsLogin: React.FC = () => {
             </Button>
           </form>
 
-          {/* Demo credentials hint */}
-          <div className="mt-6 rounded-lg border border-border bg-muted/50 p-4">
-            <p className="mb-2 text-sm font-medium">Demo Accounts</p>
-            <div className="space-y-1 text-xs text-muted-foreground">
-              <p><strong>john@bravocontractors.com</strong> / sub123 (Bravo Contractors)</p>
-              <p><strong>sarah@deltaunderground.com</strong> / sub123 (Delta Underground)</p>
-            </div>
+          {/* Demo mode warning */}
+          <div className="mt-6 rounded-lg border border-amber-500/30 bg-amber-500/10 p-4">
+            <p className="mb-1 text-sm font-medium text-amber-600 dark:text-amber-400">⚠️ Demo Mode</p>
+            <p className="text-xs text-muted-foreground">
+              This is a demonstration system. Use any registered subcontractor email with a password of 4+ characters.
+            </p>
           </div>
         </CardContent>
       </Card>
